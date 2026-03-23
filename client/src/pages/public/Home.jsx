@@ -1,8 +1,8 @@
-
+// src/pages/public/Home.jsx
 import { Link } from "react-router-dom";
 import { useAuth } from "../../context/AuthContext";
-import herovideo from "../../assets/herovideo.mp4";
 import logo from "../../assets/logo.png";
+import herovideo from "../../assets/herovideo.mp4";
 import {
   Calendar, MapPin, Ticket, Users,
   ChevronRight, MessageCircle, Smartphone,
@@ -274,7 +274,7 @@ const Home = () => {
           filter: drop-shadow(0 2px 18px rgba(0,0,0,0.55))
                   drop-shadow(0 0 30px rgba(196,148,90,0.3));
         }
-        .h-logo { height: 250px; width: auto; display: block; }
+        .h-logo { height: 200px; width: auto; display: block; }
         @media(max-width:640px) { .h-logo { height: 110px; } }
 
         /* ── HERO CONTENT ── */
