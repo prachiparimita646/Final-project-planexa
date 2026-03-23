@@ -2,7 +2,7 @@
 import { Link } from "react-router-dom";
 import { useAuth } from "../../context/AuthContext";
 import logo from "../../assets/logo.png";
-import herovideo from "../../assets/herovideo.mp4";
+import herovideo from "../../public/herovideo.mp4";
 import {
   Calendar, MapPin, Ticket, Users,
   ChevronRight, MessageCircle, Smartphone,
