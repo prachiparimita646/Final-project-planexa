@@ -1,36 +1,43 @@
-const express = require('express');
-const dotenv = require('dotenv');
-const cors = require('cors');
-const connectDB = require('./config/db');
-dotenv.config();
+require('dotenv').config();
 
-// Connect to the database
-connectDB();
+const express  = require('express');
+const mongoose = require('mongoose');
+const cors     = require('cors');
 
 const app = express();
-const PORT = process.env.PORT || 5000;
 
-app.use(cors());
+// ── Middleware ──
+
+app.use(cors({
+  origin: (origin, callback) => {
+    if (!origin || origin.startsWith('http://localhost')) {
+      callback(null, true);
+    } else {
+      callback(new Error('Not allowed by CORS'));
+    }
+  },
+  credentials: true,
+}));
 app.use(express.json());
 
+// ── Connect to MongoDB ──
+mongoose.connect(process.env.MONGO_URI)
+  .then(() => console.log('✅ MongoDB connected to Event_Management_database'))
+  .catch(err => console.log('❌ MongoDB connection error:', err.message));
 
-// Routes
-const authRoutes = require('./route/authRoutes');
-const contactRoutes = require('./route/contactRoutes');
-const eventsRoutes = require('./route/eventRoutes');
-const bookingRoutes = require("./route/bookingRoutes");
+// ── Routes ──
+app.use('/api/auth',     require('./route/authRoutes'));
+app.use('/api/events',   require('./route/eventRoutes'));
+app.use('/api/bookings', require('./route/bookingRoutes'));
+app.use('/api/contact',  require('./route/contactRoutes'));
 
-// Mount Routes
-app.use('/api/auth', authRoutes);
-app.use('/api/contact', contactRoutes);
-app.use('/api/events',eventsRoutes);
-app.use("/api/bookings", bookingRoutes);
-
-
+// ── Test route ──
 app.get('/', (req, res) => {
-  res.send('API is running...');
+  res.json({ message: '🚀 Planexa API is running!' });
 });
 
+// ── Start server ──
+const PORT = process.env.PORT || 8000;
 app.listen(PORT, () => {
-  console.log(`Server running on port ${PORT}`);
+  console.log(`🚀 Server running on http://localhost:${PORT}`);
 });
