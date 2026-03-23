@@ -1,4 +1,4 @@
-// src/pages/public/Home.jsx
+
 import { Link } from "react-router-dom";
 import { useAuth } from "../../context/AuthContext";
 import herovideo from "../../assets/herovideo.mp4";
