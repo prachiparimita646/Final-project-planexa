@@ -53,7 +53,7 @@ const Home = () => {
           </h1>
           <p className="h-hero-sub">
             Concerts, galas, weddings, conferences and more —
-            curated experiences worth every memory.
+            curated experiences worth every memory.make your events memorable.
           </p>
           <div className="h-cta-row">
             {user ? (
