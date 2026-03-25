@@ -1,8 +1,7 @@
-// src/pages/public/Home.jsx
 import { Link } from "react-router-dom";
 import { useAuth } from "../../context/AuthContext";
 import logo from "../../assets/logo.png";
-import herovideo from "../../public/herovideo.mp4";
+import herovideo from "../../assets/herovideo.mp4";
 import {
   Calendar, MapPin, Ticket, Users,
   ChevronRight, MessageCircle, Smartphone,
@@ -207,7 +206,7 @@ const Home = () => {
         </footer>
       </main>
 
-      {/* ══ ALL STYLES ══ */}
+      {/* STYLES */}
       <style>{`
         @import url('https://fonts.googleapis.com/css2?family=Cormorant+Garamond:ital,wght@0,600;0,700;1,600;1,700&family=Jost:wght@300;400;500;600&display=swap');
 

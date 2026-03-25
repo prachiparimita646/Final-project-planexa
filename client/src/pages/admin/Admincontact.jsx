@@ -49,14 +49,14 @@ const AdminContact = () => {
 
   useEffect(() => { fetchContacts(); }, []);
 
-  // ── Mark as read — 
+  
   const markRead = async (id) => {
     const msg = messages.find(m => m.id === id);
     if (!msg || msg.status !== "unread") return; 
 
     try {
       await api.put(`/contact/status/${id}`, { status: "read" });
-      // Update local state so UI reflects immediately without refetch
+      
       setMessages(prev =>
         prev.map(m => m.id === id ? { ...m, status: "read" } : m)
       );

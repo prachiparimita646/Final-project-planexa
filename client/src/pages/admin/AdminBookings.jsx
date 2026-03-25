@@ -204,7 +204,7 @@ const AdminBookings = () => {
                           <Eye size={14} />
                         </button>
 
-                        {/* ✓ Approve — only when pending */}
+                        {/*  Approve — only when pending */}
                         {b.status === "pending" && (
                           <button
                             className="ab-action-btn"
@@ -215,7 +215,7 @@ const AdminBookings = () => {
                           </button>
                         )}
 
-                        {/* ✕ Cancel — when pending or confirmed */}
+                        {/*  Cancel — when pending or confirmed */}
                         {(b.status === "pending" || b.status === "confirmed") && (
                           <button
                             className="ab-action-btn"
@@ -226,7 +226,7 @@ const AdminBookings = () => {
                           </button>
                         )}
 
-                        {/* 🗑 Delete — always */}
+                        {/*  Delete — always */}
                         <button
                           className="ab-action-btn"
                           title="Delete booking"

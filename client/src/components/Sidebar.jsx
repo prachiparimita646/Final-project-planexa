@@ -1,4 +1,3 @@
-// src/components/Sidebar.jsx
 import { Link, useLocation } from 'react-router-dom';
 import { useAuth } from '../context/AuthContext';
 import {
@@ -38,7 +37,7 @@ const Sidebar = () => {
         .sb-logout:hover { background: rgba(192,57,26,0.85) !important; }
       `}</style>
 
-      {/* Logo / Brand */}
+      {/* Logo */}
       <div style={{ padding: "24px 20px 20px", borderBottom: "1px solid rgba(255,255,255,0.08)" }}>
         <div style={{ display: "flex", alignItems: "center", gap: 10 }}>
           <div style={{ width: 36, height: 36, borderRadius: 10, background: "linear-gradient(135deg,#c0451a,#a03010)", display: "flex", alignItems: "center", justifyContent: "center" }}>

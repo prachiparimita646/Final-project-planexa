@@ -1,4 +1,3 @@
-// src/pages/public/EventDetail.jsx
 import { useEffect, useState } from "react";
 import { useParams, useNavigate } from "react-router-dom";
 import { ArrowLeft, Calendar, MapPin, Users, Clock, Tag, CheckCircle, AlertCircle } from "lucide-react";
@@ -30,9 +29,7 @@ const EventDetail = () => {
   }, [id]);
 
   // ── REAL booking API call ──
-  // POST /api/bookings  →  { eventId, numberOfSeats }
-  // Your Booking model needs: user (from token), event, numberOfSeats, totalAmount
-  const handleBooking = async () => {
+   const handleBooking = async () => {
     if (!seats || seats <= 0) {
       setMessage({ text: "Please select a valid number of seats.", type: "error" }); return;
     }
@@ -43,14 +40,13 @@ const EventDetail = () => {
       setBookingLoading(true);
       setMessage({ text: "", type: "" });
 
-      // ✅ Real API call — saves to MongoDB bookings collection
+      // Real API call
       await api.post("/bookings", {
         eventId:       event._id,
         numberOfSeats: seats,
         totalAmount:   seats * event.price,
       });
 
-      // Update local seat count
       setEvent(prev => ({ ...prev, availableSeats: prev.availableSeats - seats }));
       setMessage({
         text: `🎉 Booking confirmed! ${seats} seat${seats > 1 ? "s" : ""} reserved. Check My Bookings to view.`,
@@ -120,7 +116,7 @@ const EventDetail = () => {
       <div style={{ maxWidth: 1040, margin: "0 auto", padding: "28px 24px 72px" }}>
         <div className="ed-grid" style={{ display: "grid", gridTemplateColumns: "1fr 340px", gap: 26, alignItems: "start" }}>
 
-          {/* ── LEFT ── */}
+          {/* LEFT */}
           <div className="ed-fade">
             {/* Hero image */}
             <div style={{ borderRadius: 20, overflow: "hidden", marginBottom: 22, position: "relative", boxShadow: "0 8px 32px rgba(139,94,60,0.15)" }}>
@@ -174,7 +170,7 @@ const EventDetail = () => {
             </div>
           </div>
 
-          {/* ── RIGHT: Booking card ── */}
+          {/* RIGHT: Booking card */}
           <div className="ed-fade" style={{ animationDelay: "0.15s", position: "sticky", top: 24 }}>
             <div style={{ background: "#faf4ec", borderRadius: 20, border: "1px solid rgba(139,94,60,0.15)", boxShadow: "0 8px 32px rgba(139,94,60,0.10)", overflow: "hidden" }}>
               <div style={{ background: "linear-gradient(135deg,#3d1f0a,#2c1506)", padding: "18px 22px" }}>
@@ -250,7 +246,7 @@ const EventDetail = () => {
               </div>
             </div>
 
-            {/* Event details mini card */}
+            {/* Event details card */}
             <div style={{ background: "#faf4ec", borderRadius: 16, padding: "16px 18px", marginTop: 14, border: "1px solid rgba(139,94,60,0.13)" }}>
               <h3 style={{ fontFamily: "'Cormorant Garamond', serif", fontSize: "0.95rem", fontWeight: 700, color: "#2c1a0e", marginBottom: 10 }}>Event Details</h3>
               {[

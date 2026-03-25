@@ -1,4 +1,3 @@
-// src/pages/admin/AdminEvents.jsx
 import { useState, useEffect } from "react";
 import { Link, useNavigate } from "react-router-dom";
 import {
@@ -21,13 +20,11 @@ const AdminEvents = () => {
     setTimeout(() => setToast(null), 2500);
   };
 
-  // ── Fetch all events from MongoDB ──
-  // GET /api/events  →  returns array of event objects with real _id
-  const fetchEvents = async () => {
+   const fetchEvents = async () => {
     try {
       setLoading(true);
       const res = await api.get("/events");
-      setEvents(res.data); // each event has _id, title, date, location, price, totalSeats, availableSeats, status, thumbnail
+      setEvents(res.data); 
     } catch (err) {
       showToast("Failed to load events.", "error");
     } finally {
@@ -40,7 +37,6 @@ const AdminEvents = () => {
   }, []);
 
   // ── Delete event from MongoDB ──
-  // DELETE /api/events/:id
   const deleteEvent = async (id, name) => {
     if (!window.confirm(`Delete "${name}"? This cannot be undone.`)) return;
     try {
@@ -219,21 +215,21 @@ const AdminEvents = () => {
                     </span>
                     <div style={{ display: "flex", gap: 7 }}>
 
-                      {/* 👁 View — public event detail page with real MongoDB _id */}
+                      {/* View — public event detail page with real MongoDB _id */}
                       <button className="ae-btn" title="View public page"
                         onClick={() => navigate(`/events/${ev._id}`)}
                         style={{ width: 32, height: 32, borderRadius: 8, background: "#e7f3ff", display: "flex", alignItems: "center", justifyContent: "center", color: "#0e6eb8" }}>
                         <Eye size={14} />
                       </button>
 
-                      {/* ✏️ Edit — passes real MongoDB _id to /admin/events/:id/edit */}
+                      {/* Edit — passes real MongoDB _id to /admin/events/:id/edit */}
                       <button className="ae-btn" title="Edit event"
                         onClick={() => navigate(`/admin/events/${ev._id}/edit`)}
                         style={{ width: 32, height: 32, borderRadius: 8, background: "#fff8e1", display: "flex", alignItems: "center", justifyContent: "center", color: "#b5860d" }}>
                         <Edit2 size={14} />
                       </button>
 
-                      {/* 🗑 Delete — calls real API with MongoDB _id */}
+                      {/*  Delete — calls real API with MongoDB _id */}
                       <button className="ae-btn" title="Delete event"
                         onClick={() => deleteEvent(ev._id, ev.title)}
                         style={{ width: 32, height: 32, borderRadius: 8, background: "#fdecea", display: "flex", alignItems: "center", justifyContent: "center", color: "#c0391a" }}>

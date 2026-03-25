@@ -1,4 +1,3 @@
-// src/pages/public/Login.jsx
 import { useState } from 'react';
 import { useNavigate, Link } from 'react-router-dom';
 import { useAuth } from '../../context/AuthContext';
@@ -48,7 +47,7 @@ const Login = () => {
         @keyframes spin     { to{transform:rotate(360deg)} }
       `}</style>
 
-      {/* ── LEFT PANEL — decorative ── */}
+      {/* LEFT PANEL */}
       <div style={{ flex: 1, background: 'linear-gradient(150deg,#3d1f0a 0%,#2c1506 55%,#3d1f0a 100%)', display: 'flex', flexDirection: 'column', alignItems: 'center', justifyContent: 'center', padding: '60px 48px', position: 'relative', overflow: 'hidden', minHeight: '100vh' }}>
 
         {/* Decorative orbs */}
@@ -101,13 +100,13 @@ const Login = () => {
           </div>
         </div>
 
-        {/* Bottom quote */}
+        {/* Bottom  */}
         <p style={{ position: 'absolute', bottom: 28, color: 'rgba(245,236,224,0.3)', fontSize: '0.72rem', fontStyle: 'italic', textAlign: 'center', letterSpacing: '0.04em' }}>
           "Craft moments that last forever"
         </p>
       </div>
 
-      {/* ── RIGHT PANEL — form ── */}
+      {/* RIGHT PANEL */}
       <div style={{ width: '100%', maxWidth: 480, background: '#faf4ec', display: 'flex', flexDirection: 'column', alignItems: 'center', justifyContent: 'center', padding: '48px 40px', position: 'relative', animation: 'fadeUp 0.6s ease 0.15s both' }}>
 
         {/* Top decorative line */}

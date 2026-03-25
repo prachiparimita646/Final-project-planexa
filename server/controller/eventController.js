@@ -1,6 +1,6 @@
 const Event = require("../model/Event");
 
-// ================= CREATE EVENT =================
+// CREATE EVENT 
 exports.createEvent = async (req, res) => {
     try {
         const {
@@ -45,7 +45,7 @@ exports.createEvent = async (req, res) => {
 
 
 
-// ================= GET ALL EVENTS =================
+//  GET ALL EVENTS 
 exports.getAllEvents = async (req, res) => {
     try {
         const events = await Event.find().sort({ createdAt: -1 });
@@ -57,7 +57,7 @@ exports.getAllEvents = async (req, res) => {
 
 
 
-// ================= GET SINGLE EVENT =================
+//  GET SINGLE EVENT 
 exports.getSingleEvent = async (req, res) => {
     try {
         const event = await Event.findById(req.params.id);
@@ -72,7 +72,7 @@ exports.getSingleEvent = async (req, res) => {
 
 
 
-// ================= UPDATE EVENT =================
+//  UPDATE EVENT
 exports.updateEvent = async (req, res) => {
     try {
         const event = await Event.findById(req.params.id);
@@ -116,7 +116,7 @@ exports.updateEvent = async (req, res) => {
 
 
 
-// ================= DELETE EVENT =================
+//  DELETE EVENT
 exports.deleteEvent = async (req, res) => {
     try {
         const event = await Event.findById(req.params.id);

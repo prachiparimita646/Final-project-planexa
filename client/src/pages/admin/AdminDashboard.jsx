@@ -1,4 +1,3 @@
-// src/pages/admin/AdminDashboard.jsx
 import { Link } from "react-router-dom";
 import { useAuth } from "../../context/AuthContext";
 import {
@@ -42,9 +41,8 @@ const AdminDashboard = () => {
     { name: "Classical Music Night", date: "Nov 22, 2025",  seats: "0/300",   status: "upcoming", category: "Music"    },
   ];
 
-  // ─── Quick links ────────────────────────────────────────────────────────────
-  // "Manage Events" → /admin/events  (AdminEvents.jsx)
-  // "View Events"   → /events        (your public Event.jsx)
+  // Quick links
+  
   const quickLinks = [
     { label: "Manage Events", to: "/admin/events",   icon: <Calendar size={20} />,      color: "#c0451a" },
     { label: "View Events",   to: "/events",          icon: <ExternalLink size={20} />,  color: "#1a6e7a" },
@@ -110,9 +108,7 @@ const AdminDashboard = () => {
         ))}
       </div>
 
-      {/* ── Quick Links ──
-           Using CSS classes for hover instead of inline onMouseEnter/querySelector
-           so they work reliably with any number of links.                        */}
+      {/* ── Quick Links ── */}
       <div style={{ display: "grid", gridTemplateColumns: "repeat(auto-fill, minmax(160px, 1fr))", gap: 12, marginBottom: 24 }}>
         {quickLinks.map((q, i) => (
           <Link
@@ -142,7 +138,7 @@ const AdminDashboard = () => {
         ))}
       </div>
 
-      {/* ── Two-column: bookings + events ── */}
+      {/* ──  bookings + events ── */}
       <div style={{ display: "grid", gridTemplateColumns: "1fr 1fr", gap: 20, marginBottom: 24 }}>
 
         {/* Recent Bookings */}
@@ -173,14 +169,14 @@ const AdminDashboard = () => {
           ))}
         </div>
 
-        {/* Recent Events — "Manage Events" button → /admin/events */}
+        {/* Recent Events  */}
         <div style={{ background: "#fff", borderRadius: 18, border: "1px solid rgba(192,69,26,0.11)", boxShadow: "0 4px 16px rgba(192,69,26,0.07)", overflow: "hidden", display: "flex", flexDirection: "column" }}>
           <div style={{ padding: "18px 22px 14px", borderBottom: "1px solid rgba(192,69,26,0.07)", display: "flex", alignItems: "center", justifyContent: "space-between", flexShrink: 0 }}>
             <div>
               <p style={{ fontSize: "0.62rem", letterSpacing: "0.18em", fontWeight: 700, color: "#e87c3e", textTransform: "uppercase", marginBottom: 2 }}>ALL EVENTS</p>
               <h2 style={{ fontFamily: "'Playfair Display', serif", fontSize: "1.1rem", fontWeight: 700, color: "#2e1106" }}>Events Overview</h2>
             </div>
-            {/* Manage Events → /admin/events — same style as View All Bookings */}
+            {/* Manage Events  */}
             <Link to="/admin/events" style={{ fontSize: "0.75rem", fontWeight: 700, color: "#c0451a", textDecoration: "none", display: "flex", alignItems: "center", gap: 3 }}>
               View All <ChevronRight size={12} />
             </Link>

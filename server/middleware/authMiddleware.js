@@ -17,7 +17,7 @@ const protect = async (req, res, next) => {
 
       // Get user from the token
       req.user = await User.findById(decoded.id).select('-password');
-      req.user.role = decoded.role; // Ensure role is passed
+      req.user.role = decoded.role; 
 
       next();
     } catch (error) {

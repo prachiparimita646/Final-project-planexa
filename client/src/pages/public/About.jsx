@@ -1,7 +1,3 @@
-// src/pages/public/About.jsx
-// All components merged: AboutHero + MissionVision + ProcessTimeline + StatsSection + Testimonials
-// Single CSS file: About.css
-
 import React, { useState, useEffect } from 'react';
 import {
   FaBullseye, FaEye, FaHandshake,
@@ -12,10 +8,7 @@ import {
 } from 'react-icons/fa';
 import './About.css';
 
-// ══════════════════════════════════════════
 //  DATA
-// ══════════════════════════════════════════
-
 const processSteps = [
   {
     id: 1, icon: <FaLightbulb />, title: 'Discovery & Concept',
@@ -79,9 +72,7 @@ const testimonials = [
   },
 ];
 
-// ══════════════════════════════════════════
 //  ABOUT PAGE
-// ══════════════════════════════════════════
 const About = () => {
   const [currentIndex, setCurrentIndex] = useState(0);
   const [isTransitioning, setIsTransitioning] = useState(false);
@@ -263,7 +254,7 @@ const About = () => {
             ))}
           </div>
 
-          {/* Grid (desktop) */}
+          {/* Grid */}
           <div className="testimonials-grid">
             {testimonials.map(t => (
               <div key={t.id} className="testimonial-grid-card">
@@ -285,7 +276,7 @@ const About = () => {
         </div>
       </section>
 
-      {/* ══ 6. CTA ══ */}
+      {/*  CTA */}
       <section className="cta-section">
         <h2>Ready to Create Something Extraordinary?</h2>
         <p>Let's bring your vision to life with our expert event management team.</p>

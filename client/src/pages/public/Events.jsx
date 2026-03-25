@@ -1,7 +1,6 @@
-// src/pages/public/Events.jsx
 import { useState, useEffect } from "react";
 import { useNavigate } from "react-router-dom";
-import api from "../../services/api"; // ← your existing API service
+import api from "../../services/api"; 
 import { Calendar, MapPin, Search, Users, ChevronRight } from "lucide-react";
 
 const EVENTS_DATA = [
@@ -105,22 +104,17 @@ const Events = () => {
   const [filterCat, setFilterCat]     = useState("All");
   const [filterStatus, setFilterStatus] = useState("all");
 
-  // ── API fetch ──────────────────────────────────────────────────────────────
-  // This useEffect calls your real backend. While the backend is not ready,
-  // events is pre-filled with EVENTS_DATA above so the page still works.
-  //
-  // Once your backend is live, this will automatically fetch real events.
-  // If the API fails, the page silently keeps showing EVENTS_DATA.
+  // ── API fetch ──
+ 
   useEffect(() => {
     const fetchEvents = async () => {
       try {
         setLoading(true);
-        const res = await api.get("/events");  // ← calls your backend
+        const res = await api.get("/events");  
         if (res.data && res.data.length > 0) {
-          setEvents(res.data);                 // ← replaces inline data with real data
+          setEvents(res.data);               
         }
       } catch (error) {
-        // API not ready yet — inline EVENTS_DATA is already loaded, nothing to do
         console.log("Using local event data:", error.message);
       } finally {
         setLoading(false);
@@ -128,8 +122,7 @@ const Events = () => {
     };
     fetchEvents();
   }, []);
-  // ──────────────────────────────────────────────────────────────────────────
-
+  
   const categories = ["All", ...Array.from(new Set(events.map(e => e.category)))];
 
   const filtered = events.filter(ev => {

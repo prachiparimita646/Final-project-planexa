@@ -1,10 +1,9 @@
-// src/pages/public/Event.jsx
 import React, { useEffect, useState } from "react";
 import { useNavigate } from "react-router-dom";
 import { Calendar, MapPin, Users, ChevronRight, Search, SlidersHorizontal, X } from "lucide-react";
 import api from "../../services/api";
 
-// ── Category config ────────────────────────────────────────────────────────
+// ── Category config ─
 const CAT_CONFIG = {
   Music:    { color: "#7a4a2a", bg: "#f5e6d8", emoji: "🎵" },
   Tech:     { color: "#2a5a4a", bg: "#d8f0e8", emoji: "💻" },

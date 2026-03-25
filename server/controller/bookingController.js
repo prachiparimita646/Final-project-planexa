@@ -1,12 +1,11 @@
 const Booking = require("../model/Booking");
 const Event = require("../model/Event");
 
-// ================= BOOK EVENT =================
 exports.bookEvent = async (req, res) => {
     try {
         const { eventId, numberOfSeats } = req.body;
 
-        const userId = req.user._id; // from auth middleware
+        const userId = req.user._id; 
 
         if (!numberOfSeats || numberOfSeats <= 0) {
             return res.status(400).json({
@@ -60,7 +59,7 @@ exports.bookEvent = async (req, res) => {
 
 
 
-// ================= GET USER BOOKINGS =================
+// GET USER BOOKINGS 
 exports.getMyBookings = async (req, res) => {
     try {
         const userId = req.user._id;
@@ -81,7 +80,7 @@ exports.getMyBookings = async (req, res) => {
     }
 };
 
-// ================= ADMIN UPDATE BOOKING STATUS =================
+// ADMIN UPDATE BOOKING STATUS
 exports.updateBookingStatus = async (req, res) => {
     try {
         const { bookingStatus, paymentStatus } = req.body;
@@ -127,7 +126,7 @@ exports.updateBookingStatus = async (req, res) => {
     }
 };
 
-// ================= GET ALL BOOKINGS (ADMIN) =================
+// GET ALL BOOKINGS (ADMIN)
 exports.getAllBookings = async (req, res) => {
     try {
         const bookings = await Booking.find()

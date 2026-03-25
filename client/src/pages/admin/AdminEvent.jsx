@@ -116,7 +116,7 @@ const AdminEvent = () => {
       }
 
       if (isNew) {
-        // CREATE — POST /api/events
+        // CREATE
         await api.post("/events", formData, {
           headers: { "Content-Type": "multipart/form-data" },
         });
@@ -128,7 +128,7 @@ const AdminEvent = () => {
         showToast("Event updated successfully! ✓", "success");
       }
 
-      // Navigate back after short delay so toast is visible
+      
       setTimeout(() => navigate("/admin/events"), 1200);
 
     } catch (err) {
@@ -153,7 +153,7 @@ const AdminEvent = () => {
     marginBottom: 6, display: "block",
   };
 
-  // ── Loading state (fetching event for edit) ──
+  // ── Loading state  ──
   if (loading) return (
     <div style={{ fontFamily: "'Nunito', sans-serif", display: "flex", alignItems: "center", justifyContent: "center", minHeight: 300, color: "#b07b65" }}>
       <style>{`@keyframes spin { to { transform: rotate(360deg); } }`}</style>

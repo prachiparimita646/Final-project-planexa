@@ -1,4 +1,3 @@
-// src/components/Navbar.jsx
 import { useState, useEffect } from "react";
 import { Link, useLocation } from "react-router-dom";
 import { useAuth } from "../context/AuthContext";
@@ -10,14 +9,12 @@ const Navbar = () => {
   const [scrolled, setScrolled] = useState(false);
   const [menuOpen, setMenuOpen] = useState(false);
 
-  // Detect scroll to add solid background
   useEffect(() => {
     const onScroll = () => setScrolled(window.scrollY > 20);
     window.addEventListener("scroll", onScroll);
     return () => window.removeEventListener("scroll", onScroll);
   }, []);
 
-  // Close mobile menu on route change
   useEffect(() => { setMenuOpen(false); }, [location]);
 
   const isActive = (path) =>
@@ -41,12 +38,12 @@ const Navbar = () => {
           transition: background 0.3s, box-shadow 0.3s;
         }
         .nb-root.scrolled {
-          background: rgba(250,244,236,0.97);
-          box-shadow: 0 2px 20px rgba(139,94,60,0.12);
+          background: rgba(236,220,200,0.97);
+          box-shadow: none;
         }
         .nb-root.top {
-          background: rgba(250,244,236,0.85);
-          box-shadow: 0 1px 0 rgba(139,94,60,0.08);
+          background: rgba(236,220,200,0.75);
+          box-shadow: none;
         }
 
         /* Nav link with animated underline */
@@ -151,15 +148,16 @@ const Navbar = () => {
 
             {/* ── Logo ── */}
             <Link to="/" style={{ textDecoration: "none", display: "flex", alignItems: "center", gap: 10 }}>
-              {/* Decorative lines */}
+            
               <div style={{ display: "flex", flexDirection: "column", gap: 3.5 }}>
                 <span style={{ width: 20, height: 2, background: "linear-gradient(90deg,#8b5e3c,#c4945a)", borderRadius: 999, display: "block" }} />
                 <span style={{ width: 14, height: 2, background: "linear-gradient(90deg,#8b5e3c,#c4945a)", borderRadius: 999, display: "block" }} />
                 <span style={{ width: 20, height: 2, background: "linear-gradient(90deg,#8b5e3c,#c4945a)", borderRadius: 999, display: "block" }} />
               </div>
-              <span style={{ fontFamily: "'Cormorant Garamond', serif", fontSize: "1.55rem", fontWeight: 700, color: "#2c1a0e", letterSpacing: "-0.01em", lineHeight: 1 }}>
-                Planexa
-              </span>
+              <div style={{ display: "flex", flexDirection: "column", lineHeight: 1.1 }}>
+                <span style={{ fontFamily: "'Cormorant Garamond', serif", fontSize: "1.25rem", fontWeight: 700, color: "#2c1a0e", letterSpacing: "-0.01em" }}>The Event Utsava</span>
+                <span style={{ fontFamily: "'Cormorant Garamond', serif", fontSize: "0.78rem", fontWeight: 600, color: "#c4945a", fontStyle: "italic", letterSpacing: "0.04em" }}>by Planexa</span>
+              </div>
             </Link>
 
             {/* ── Desktop Nav ── */}

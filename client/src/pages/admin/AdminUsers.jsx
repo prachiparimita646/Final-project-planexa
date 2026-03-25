@@ -4,10 +4,6 @@ import {
   Edit2, Trash2, Plus, X, Save, BookOpen, Calendar
 } from "lucide-react";
 
-/* ─────────────────────────────────────────────
-   Modal defined OUTSIDE AdminUsers so it never
-   remounts on parent re-render — fixes focus loss
-───────────────────────────────────────────── */
 const UserModal = ({ title, form, onChange, onSave, onClose, saveLabel }) => {
   const inp = {
     width: "100%", padding: "9px 13px", borderRadius: 9,
@@ -123,9 +119,7 @@ const UserModal = ({ title, form, onChange, onSave, onClose, saveLabel }) => {
   );
 };
 
-/* ─────────────────────────────────────────────
-   Data & constants
-───────────────────────────────────────────── */
+/* Data & constants*/
 const initialUsers = [
   { id: 1,  name: "Priya Sharma",  email: "priya@email.com",  phone: "+91 98001 00001", role: "user",  status: "active",   joined: "Jan 2025", bookings: 5  },
   { id: 2,  name: "Arjun Mehta",   email: "arjun@email.com",  phone: "+91 98001 00002", role: "user",  status: "active",   joined: "Feb 2025", bookings: 3  },
@@ -145,9 +139,7 @@ const avatarColors = ["#c0451a","#0e6eb8","#1a7a4a","#6b2fa0","#b5860d","#1a6e7a
 const initials = name => name.split(" ").map(w => w[0]).join("").slice(0, 2).toUpperCase();
 const emptyForm = { name: "", email: "", phone: "", role: "user", status: "active" };
 
-/* ─────────────────────────────────────────────
-   Main component
-───────────────────────────────────────────── */
+/*  Main component*/
 const AdminUsers = () => {
   const [users, setUsers]           = useState(initialUsers);
   const [search, setSearch]         = useState("");
@@ -195,14 +187,12 @@ const AdminUsers = () => {
     showToast(`${u?.name} deleted`, "error");
   };
 
-  // Open edit: snapshot current values into editForm
-  const openEdit = (u) => {
+    const openEdit = (u) => {
     setEditForm({ name: u.name, email: u.email, phone: u.phone, role: u.role, status: u.status });
     setEditId(u.id);
   };
 
-  // Field-level onChange for edit form — key + value, no object spread issue
-  const onEditChange = (key, val) => {
+    const onEditChange = (key, val) => {
     setEditForm(prev => ({ ...prev, [key]: val }));
   };
 
@@ -215,8 +205,7 @@ const AdminUsers = () => {
     setEditId(null);
   };
 
-  // Field-level onChange for add form
-  const onAddChange = (key, val) => {
+    const onAddChange = (key, val) => {
     setAddForm(prev => ({ ...prev, [key]: val }));
   };
 
