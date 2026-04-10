@@ -1,4 +1,4 @@
-import React, { useState, useEffect } from 'react';
+import React, { useState, useEffect, useRef } from 'react';
 import {
   FaBullseye, FaEye, FaHandshake,
   FaLightbulb, FaClipboardList, FaUsers,
@@ -8,7 +8,6 @@ import {
 } from 'react-icons/fa';
 import './About.css';
 
-//  DATA
 const processSteps = [
   {
     id: 1, icon: <FaLightbulb />, title: 'Discovery & Concept',
@@ -42,11 +41,11 @@ const processSteps = [
   },
 ];
 
-const stats = [
-  { icon: <FaCalendarAlt />, value: '500+',    label: 'Events Organized',  delay: 0 },
-  { icon: <FaUsers />,       value: '10,000+', label: 'Happy Attendees',   delay: 1 },
-  { icon: <FaTrophy />,      value: '50+',     label: 'Awards Won',        delay: 2 },
-  { icon: <FaSmile />,       value: '200+',    label: 'Satisfied Clients', delay: 3 },
+const statsData = [
+  { icon: <FaCalendarAlt />, target: 500, suffix: '+', label: 'Events Organized', delay: 0 },
+  { icon: <FaUsers />,       target: 10000, suffix: '+', label: 'Happy Attendees',  delay: 1 },
+  { icon: <FaTrophy />,      target: 50, suffix: '+', label: 'Awards Won',        delay: 2 },
+  { icon: <FaSmile />,       target: 200, suffix: '+', label: 'Satisfied Clients', delay: 3 },
 ];
 
 const testimonials = [
@@ -72,10 +71,75 @@ const testimonials = [
   },
 ];
 
-//  ABOUT PAGE
+// ──────────────────────────────────────────
+//  CUSTOM HOOK: SCROLL REVEAL
+// ──────────────────────────────────────────
+const useScrollReveal = () => {
+  const refs = useRef([]);
+  useEffect(() => {
+    const observer = new IntersectionObserver(
+      (entries) => {
+        entries.forEach(entry => {
+          if (entry.isIntersecting) {
+            entry.target.classList.add('revealed');
+          }
+        });
+      },
+      { threshold: 0.2, rootMargin: '0px 0px -50px 0px' }
+    );
+    refs.current.forEach(el => el && observer.observe(el));
+    return () => observer.disconnect();
+  }, []);
+  return (el) => refs.current.push(el);
+};
+
+// ──────────────────────────────────────────
+//  COUNTER COMPONENT
+// ──────────────────────────────────────────
+const CountUp = ({ target, suffix, duration = 2000 }) => {
+  const [count, setCount] = useState(0);
+  const elementRef = useRef(null);
+  const hasAnimated = useRef(false);
+
+  useEffect(() => {
+    const observer = new IntersectionObserver(
+      (entries) => {
+        if (entries[0].isIntersecting && !hasAnimated.current) {
+          hasAnimated.current = true;
+          let start = 0;
+          const step = target / (duration / 16);
+          const timer = setInterval(() => {
+            start += step;
+            if (start >= target) {
+              setCount(target);
+              clearInterval(timer);
+            } else {
+              setCount(Math.floor(start));
+            }
+          }, 16);
+          return () => clearInterval(timer);
+        }
+      },
+      { threshold: 0.5 }
+    );
+    if (elementRef.current) observer.observe(elementRef.current);
+    return () => observer.disconnect();
+  }, [target, duration]);
+
+  return (
+    <span ref={elementRef}>
+      {count.toLocaleString()}{suffix}
+    </span>
+  );
+};
+
+// ──────────────────────────────────────────
+//  MAIN ABOUT COMPONENT
+// ──────────────────────────────────────────
 const About = () => {
   const [currentIndex, setCurrentIndex] = useState(0);
   const [isTransitioning, setIsTransitioning] = useState(false);
+  const addRevealRef = useScrollReveal();
 
   const transition = (cb) => {
     if (isTransitioning) return;
@@ -101,11 +165,12 @@ const About = () => {
   return (
     <div className="about">
 
-      {/* ══ 1. HERO ══ */}
+      {/* ── 1. HERO ── */}
       <section className="about-hero">
+        <div className="hero-bg-parallax"></div>
         <div className="hero-content">
-          <h1>Creating Unforgettable Experiences</h1>
-          <p className="hero-subtitle">
+          <h1 className="reveal-on-scroll" ref={addRevealRef}>Creating Unforgettable Experiences</h1>
+          <p className="hero-subtitle reveal-on-scroll" ref={addRevealRef}>
             We are passionate event professionals dedicated to transforming your vision into reality.
             With years of experience and a creative approach, we ensure every event is memorable.
           </p>
@@ -116,7 +181,7 @@ const About = () => {
               { num: '50+',  label: 'Team Members'       },
               { num: '10+',  label: 'Years Experience'   },
             ].map((s, i) => (
-              <div key={i} className="stat-item">
+              <div key={i} className="stat-item reveal-on-scroll" ref={addRevealRef}>
                 <h3>{s.num}</h3>
                 <p>{s.label}</p>
               </div>
@@ -125,23 +190,23 @@ const About = () => {
         </div>
       </section>
 
-      {/* ══ 2. MISSION / VISION ══ */}
+      {/* ── 2. MISSION / VISION ── */}
       <section className="mission-vision">
         <div className="container">
-          <h2 className="section-title">Our Philosophy</h2>
-          <p className="section-subtitle">The values and vision that drive everything we do</p>
+          <h2 className="section-title reveal-on-scroll" ref={addRevealRef}>Our Philosophy</h2>
+          <p className="section-subtitle reveal-on-scroll" ref={addRevealRef}>The values and vision that drive everything we do</p>
           <div className="cards-container">
-            <div className="card">
+            <div className="card reveal-on-scroll" ref={addRevealRef}>
               <div className="card-icon"><FaBullseye /></div>
               <h3>Our Mission</h3>
               <p>To deliver exceptional event experiences through innovation, attention to detail, and seamless execution. We strive to exceed expectations and create lasting memories.</p>
             </div>
-            <div className="card">
+            <div className="card reveal-on-scroll" ref={addRevealRef}>
               <div className="card-icon"><FaEye /></div>
               <h3>Our Vision</h3>
               <p>To be the leading event management company recognized globally for creativity, reliability, and transforming ordinary gatherings into extraordinary experiences.</p>
             </div>
-            <div className="card">
+            <div className="card reveal-on-scroll" ref={addRevealRef}>
               <div className="card-icon"><FaHandshake /></div>
               <h3>Our Values</h3>
               <p>Integrity, creativity, collaboration, and excellence guide everything we do. We believe in building lasting relationships based on trust and outstanding results.</p>
@@ -150,16 +215,16 @@ const About = () => {
         </div>
       </section>
 
-      {/* ══ 3. PROCESS TIMELINE ══ */}
+      {/* ── 3. PROCESS TIMELINE ── */}
       <section className="process-section">
         <div className="container">
-          <h2 className="section-title">Our Event Process</h2>
-          <p className="section-subtitle">A structured approach to ensure every event is executed flawlessly</p>
+          <h2 className="section-title reveal-on-scroll" ref={addRevealRef}>Our Event Process</h2>
+          <p className="section-subtitle reveal-on-scroll" ref={addRevealRef}>A structured approach to ensure every event is executed flawlessly</p>
 
-          {/* Desktop */}
+          {/* Desktop timeline */}
           <div className="process-timeline">
             {processSteps.map((step, index) => (
-              <div key={step.id} className={`process-step ${index % 2 === 0 ? 'left' : 'right'}`}>
+              <div key={step.id} className={`process-step ${index % 2 === 0 ? 'left' : 'right'} reveal-on-scroll`} ref={addRevealRef}>
                 <div className="step-content">
                   <div className="step-icon">{step.icon}</div>
                   <div className="step-number">0{step.id}</div>
@@ -175,10 +240,10 @@ const About = () => {
             <div className="timeline-line" />
           </div>
 
-          {/* Mobile */}
+          {/* Mobile timeline */}
           <div className="process-timeline-mobile">
             {processSteps.map(step => (
-              <div key={step.id} className="process-step-mobile">
+              <div key={step.id} className="process-step-mobile reveal-on-scroll" ref={addRevealRef}>
                 <div className="step-icon-mobile">{step.icon}</div>
                 <div className="step-content-mobile">
                   <div className="step-header">
@@ -197,16 +262,16 @@ const About = () => {
         </div>
       </section>
 
-      {/* ══ 4. STATS ══ */}
+      {/* ── 4. STATS ── */}
       <section className="stats-section">
         <div className="container">
           <div className="stats-grid">
-            {stats.map((s, i) => (
-              <div key={i} className="stat-box" style={{ '--delay': s.delay }}>
-                <div className="stat-icon">{s.icon}</div>
+            {statsData.map((stat, i) => (
+              <div key={i} className="stat-box reveal-on-scroll" ref={addRevealRef}>
+                <div className="stat-icon">{stat.icon}</div>
                 <div className="stat-content">
-                  <h3>{s.value}</h3>
-                  <p>{s.label}</p>
+                  <h3><CountUp target={stat.target} suffix={stat.suffix} /></h3>
+                  <p>{stat.label}</p>
                 </div>
               </div>
             ))}
@@ -214,14 +279,14 @@ const About = () => {
         </div>
       </section>
 
-      {/* ══ 5. TESTIMONIALS ══ */}
+      {/* ── 5. TESTIMONIALS ── */}
       <section className="testimonials-section">
         <div className="container">
-          <h2 className="section-title">What Our Clients Say</h2>
-          <p className="section-subtitle">Don't just take our word for it — hear from our satisfied clients</p>
+          <h2 className="section-title reveal-on-scroll" ref={addRevealRef}>What Our Clients Say</h2>
+          <p className="section-subtitle reveal-on-scroll" ref={addRevealRef}>Don't just take our word for it — hear from our satisfied clients</p>
 
           {/* Slider (mobile) */}
-          <div className="testimonials-container">
+          <div className="testimonials-container reveal-on-scroll" ref={addRevealRef}>
             <button className="nav-button prev-button" onClick={prevSlide} aria-label="Previous">
               <FaChevronLeft />
             </button>
@@ -254,10 +319,10 @@ const About = () => {
             ))}
           </div>
 
-          {/* Grid */}
+          {/* Grid  */}
           <div className="testimonials-grid">
             {testimonials.map(t => (
-              <div key={t.id} className="testimonial-grid-card">
+              <div key={t.id} className="testimonial-grid-card reveal-on-scroll" ref={addRevealRef}>
                 <div className="quote-icon-small"><FaQuoteLeft /></div>
                 <p className="testimonial-grid-text">"{t.content}"</p>
                 <div className="rating">{renderStars(t.rating)}</div>
@@ -276,8 +341,8 @@ const About = () => {
         </div>
       </section>
 
-      {/*  CTA */}
-      <section className="cta-section">
+      {/* ── 6. CTA  ── */}
+      <section className="cta-section reveal-on-scroll" ref={addRevealRef}>
         <h2>Ready to Create Something Extraordinary?</h2>
         <p>Let's bring your vision to life with our expert event management team.</p>
         <button className="cta-button" onClick={() => window.location.href = '/contact'}>

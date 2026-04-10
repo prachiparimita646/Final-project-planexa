@@ -1,10 +1,14 @@
+// server/route/contactRoutes.js
 const express = require("express");
-const { AddContact, GetContact, UpdateContact, DeleteContact } = require("../controller/contactController");
-const router = express.Router();
+const router  = express.Router();
+const {
+  addContact, getContacts, updateStatus, deleteContact,
+} = require("../controller/contactController");
+const { protect, adminOnly } = require("../middleware/authMiddleware");
 
-router.post("/add", AddContact);
-router.get("/get", GetContact);
-router.put("/update/:id",UpdateContact);
-router.delete("/delete/:id",DeleteContact);
+router.post("/add",             addContact);
+router.get("/get",              protect, adminOnly, getContacts);
+router.put("/status/:id",       protect, adminOnly, updateStatus);
+router.delete("/delete/:id",    protect, adminOnly, deleteContact);
 
 module.exports = router;

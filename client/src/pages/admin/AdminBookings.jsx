@@ -32,13 +32,14 @@ const Badge = ({ status }) => {
   );
 };
 
-const AdminBookings = () => {
+const AdminBooking = () => {
   const [bookings, setBookings]       = useState(initialBookings);
   const [search, setSearch]           = useState("");
   const [filterStatus, setFilterStatus] = useState("all");
-  const [viewBooking, setViewBooking] = useState(null); 
-  const [toast, setToast]             = useState(null);   
-  
+  const [viewBooking, setViewBooking] = useState(null);   // booking to view in modal
+  const [toast, setToast]             = useState(null);   // { msg, type }
+
+  /* ── helpers ── */
   const showToast = (msg, type = "success") => {
     setToast({ msg, type });
     setTimeout(() => setToast(null), 2800);
@@ -46,7 +47,7 @@ const AdminBookings = () => {
 
   const updateStatus = (id, status) => {
     setBookings(prev => prev.map(b => b.id === id ? { ...b, status } : b));
-   
+    // if we're viewing this booking, update modal too
     setViewBooking(prev => prev?.id === id ? { ...prev, status } : prev);
     showToast(
       status === "confirmed" ? `Booking ${id} approved ✓` : `Booking ${id} cancelled`,
@@ -86,8 +87,6 @@ const AdminBookings = () => {
     return matchSearch && matchStatus;
   });
 
-  const totalRevenue = bookings.filter(b => b.status === "confirmed").reduce((a, b) => a + b.amount, 0);
-
   /* ── btn styles ── */
   const actionBtn = (bg, color) => ({
     width: 32, height: 32, borderRadius: 8,
@@ -118,13 +117,9 @@ const AdminBookings = () => {
         </div>
       )}
 
-      {/* ── Header ── */}
-      <div style={{ display: "flex", alignItems: "flex-end", justifyContent: "space-between", flexWrap: "wrap", gap: 14, marginBottom: 28 }}>
-        <div>
-          <p style={{ fontSize: "0.68rem", letterSpacing: "0.18em", fontWeight: 700, color: "#e87c3e", textTransform: "uppercase", marginBottom: 4 }}>MANAGEMENT</p>
-          <h1 style={{ fontFamily: "'Playfair Display', serif", fontSize: "1.9rem", fontWeight: 700, color: "#2e1106" }}>Bookings</h1>
-        </div>
-        <button onClick={exportCSV} style={{ display: "inline-flex", alignItems: "center", gap: 8, background: "linear-gradient(135deg,#c0451a,#a03010)", color: "#fff", padding: "11px 22px", borderRadius: 12, fontWeight: 700, fontSize: "0.88rem", border: "none", cursor: "pointer", boxShadow: "0 4px 14px rgba(192,69,26,0.3)", fontFamily: "inherit" }}>
+            {/* Header - Export only */}
+      <div style={{ display: "flex", justifyContent: "flex-end", marginBottom: 24 }}>
+        <button onClick={exportCSV} style={{ display: "inline-flex", alignItems: "center", gap: 8, background: "linear-gradient(135deg,#c4945a,#8b5e3c)", color: "#fff", padding: "11px 22px", borderRadius: 12, fontWeight: 700, fontSize: "0.88rem", border: "none", cursor: "pointer", boxShadow: "0 4px 14px rgba(139,94,60,0.3)", fontFamily: "inherit" }}>
           <Download size={16} /> Export CSV
         </button>
       </div>
@@ -136,7 +131,6 @@ const AdminBookings = () => {
           { label: "Confirmed",      value: bookings.filter(b=>b.status==="confirmed").length, color: "#1a7a4a", bg: "#e8f7ef" },
           { label: "Pending",        value: bookings.filter(b=>b.status==="pending").length,   color: "#b5860d", bg: "#fff8e1" },
           { label: "Cancelled",      value: bookings.filter(b=>b.status==="cancelled").length, color: "#c0391a", bg: "#fdecea" },
-          { label: "Revenue",        value: `₹${(totalRevenue/1000).toFixed(1)}K`,            color: "#1a7a4a", bg: "#e8f7ef" },
         ].map((s, i) => (
           <div key={i} style={{ background: "#fff", borderRadius: 14, padding: "16px 18px", border: "1px solid rgba(192,69,26,0.11)", boxShadow: "0 3px 12px rgba(192,69,26,0.07)", position: "relative", overflow: "hidden" }}>
             <div style={{ position: "absolute", top: 0, left: 0, right: 0, height: 3, background: s.color }} />
@@ -204,7 +198,7 @@ const AdminBookings = () => {
                           <Eye size={14} />
                         </button>
 
-                        {/*  Approve — only when pending */}
+                        {/* ✓ Approve — only when pending */}
                         {b.status === "pending" && (
                           <button
                             className="ab-action-btn"
@@ -215,7 +209,7 @@ const AdminBookings = () => {
                           </button>
                         )}
 
-                        {/*  Cancel — when pending or confirmed */}
+                        {/* ✕ Cancel — when pending or confirmed */}
                         {(b.status === "pending" || b.status === "confirmed") && (
                           <button
                             className="ab-action-btn"
@@ -226,7 +220,7 @@ const AdminBookings = () => {
                           </button>
                         )}
 
-                        {/*  Delete — always */}
+                        {/* 🗑 Delete — always */}
                         <button
                           className="ab-action-btn"
                           title="Delete booking"
@@ -342,4 +336,4 @@ const AdminBookings = () => {
   );
 };
 
-export default AdminBookings;
+export default AdminBooking;

@@ -2,20 +2,18 @@ const mongoose = require("mongoose");
 
 const contactSchema = new mongoose.Schema(
   {
-    name: {
-      type: String,
-    },
-    email: {
-      type: String,
-    },
-    phone: {
-      type: String,
-    },
-    message: {
-      type: String,
+    name:    { type: String, required: true },
+    email:   { type: String, required: true },
+    phone:   { type: String, default: "" },
+    message: { type: String, required: true },
+    // ✅ status field persists to MongoDB
+    status:  {
+      type:    String,
+      enum:    ["unread", "read", "replied"],
+      default: "unread",
     },
   },
-  { timestamps: true },
+  { timestamps: true }
 );
 
 module.exports = mongoose.model("Contact", contactSchema);

@@ -2,34 +2,23 @@ const User = require('../model/User');
 const bcrypt = require('bcrypt');
 const jwt = require('jsonwebtoken');
 
-const generateToken = (id, role) => {
-  return jwt.sign({ id, role }, process.env.JWT_SECRET, { expiresIn: '30d' });
-};
+const generateToken = (id, role) => jwt.sign({ id, role }, process.env.JWT_SECRET, { expiresIn: '30d' });
 
 const registerUser = async (req, res) => {
   try {
     const { name, email, password, adminKey } = req.body;
     const userExists = await User.findOne({ email });
     if (userExists) return res.status(400).json({ message: 'User already exists' });
-
     const salt = await bcrypt.genSalt(10);
     const hashedPassword = await bcrypt.hash(password, salt);
-
     const role = adminKey && adminKey === process.env.ADMIN_SECRET_KEY ? 'admin' : 'user';
-
     const user = await User.create({ name, email, password: hashedPassword, role });
-
     if (user) {
-      res.status(201).json({
-        _id: user.id, name: user.name, email: user.email, role: user.role,
-        token: generateToken(user.id, user.role),
-      });
+      res.status(201).json({ _id: user.id, name: user.name, email: user.email, role: user.role, token: generateToken(user.id, user.role) });
     } else {
       res.status(400).json({ message: 'Invalid user data' });
     }
-  } catch (error) {
-    res.status(500).json({ message: error.message });
-  }
+  } catch (error) { res.status(500).json({ message: error.message }); }
 };
 
 const loginUser = async (req, res) => {
@@ -37,16 +26,11 @@ const loginUser = async (req, res) => {
     const { email, password } = req.body;
     const user = await User.findOne({ email });
     if (user && (await bcrypt.compare(password, user.password))) {
-      res.json({
-        _id: user.id, name: user.name, email: user.email, role: user.role,
-        token: generateToken(user.id, user.role),
-      });
+      res.json({ _id: user.id, name: user.name, email: user.email, role: user.role, token: generateToken(user.id, user.role) });
     } else {
       res.status(401).json({ message: 'Invalid credentials' });
     }
-  } catch (error) {
-    res.status(500).json({ message: error.message });
-  }
+  } catch (error) { res.status(500).json({ message: error.message }); }
 };
 
 const logoutUser = (req, res) => res.status(200).json({ message: 'Logged out successfully' });
@@ -55,18 +39,39 @@ const getMe = async (req, res) => {
   try {
     const user = await User.findById(req.user.id).select('-password');
     res.status(200).json(user);
-  } catch (error) {
-    res.status(500).json({ message: error.message });
-  }
+  } catch (error) { res.status(500).json({ message: error.message }); }
 };
 
+// Admin: get all users
 const getAllUsers = async (req, res) => {
   try {
-    const users = await User.find({ role: 'user' }).select('-password').sort({ createdAt: -1 });
+    const users = await User.find().select('-password').sort({ createdAt: -1 });
     res.status(200).json({ success: true, count: users.length, users });
-  } catch (error) {
-    res.status(500).json({ message: error.message });
-  }
+  } catch (error) { res.status(500).json({ message: error.message }); }
 };
 
-module.exports = { registerUser, loginUser, logoutUser, getMe, getAllUsers };
+// Admin: update user
+const updateUser = async (req, res) => {
+  try {
+    const { name, email, role } = req.body;
+    const user = await User.findById(req.params.id);
+    if (!user) return res.status(404).json({ message: 'User not found' });
+    if (name)  user.name  = name;
+    if (email) user.email = email;
+    if (role)  user.role  = role;
+    await user.save();
+    res.json({ success: true, user: { _id: user.id, name: user.name, email: user.email, role: user.role } });
+  } catch (error) { res.status(500).json({ message: error.message }); }
+};
+
+// Admin: delete user
+const deleteUser = async (req, res) => {
+  try {
+    const user = await User.findById(req.params.id);
+    if (!user) return res.status(404).json({ message: 'User not found' });
+    await User.findByIdAndDelete(req.params.id);
+    res.json({ success: true, message: 'User deleted' });
+  } catch (error) { res.status(500).json({ message: error.message }); }
+};
+
+module.exports = { registerUser, loginUser, logoutUser, getMe, getAllUsers, updateUser, deleteUser };

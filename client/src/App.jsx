@@ -14,7 +14,8 @@ import ContactUs   from './pages/public/ContactUs';
 import Event       from './pages/public/Event';
 import EventDetail from './pages/public/EventDetail';
 import MyBookings  from './pages/public/MyBookings';
-import Feedback    from './pages/public/Feedback';   // ← ADDED
+import Feedback    from './pages/public/Feedback'; 
+import Footer      from './pages/public/Footer';
 
 // User Pages
 import Profile from './pages/user/Profile';

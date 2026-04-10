@@ -20,11 +20,11 @@ const AdminEvents = () => {
     setTimeout(() => setToast(null), 2500);
   };
 
-   const fetchEvents = async () => {
+  const fetchEvents = async () => {
     try {
       setLoading(true);
       const res = await api.get("/events");
-      setEvents(res.data); 
+      setEvents(res.data);
     } catch (err) {
       showToast("Failed to load events.", "error");
     } finally {
@@ -36,7 +36,6 @@ const AdminEvents = () => {
     fetchEvents();
   }, []);
 
-  // ── Delete event from MongoDB ──
   const deleteEvent = async (id, name) => {
     if (!window.confirm(`Delete "${name}"? This cannot be undone.`)) return;
     try {
@@ -48,7 +47,6 @@ const AdminEvents = () => {
     }
   };
 
-  // ── Filter events ──
   const filtered = events.filter(ev => {
     const q = search.toLowerCase();
     const matchSearch = ev.title?.toLowerCase().includes(q) ||
@@ -59,7 +57,6 @@ const AdminEvents = () => {
     return matchSearch && matchStatus;
   });
 
-  // ── Occupancy % ──
   const pct = (ev) => {
     if (!ev.totalSeats) return 0;
     return Math.round(((ev.totalSeats - ev.availableSeats) / ev.totalSeats) * 100);
@@ -70,7 +67,7 @@ const AdminEvents = () => {
     : { bg: "#e7f3ff", color: "#0e6eb8", label: "Upcoming" };
 
   return (
-    <div style={{ fontFamily: "'Nunito', sans-serif", color: "#2e1106", position: "relative" }}>
+    <div style={{ fontFamily: "'Nunito', sans-serif", color: "#2e1106", position: "relative", paddingTop: 0, marginTop: 0 }}>
       <style>{`
         @import url('https://fonts.googleapis.com/css2?family=Playfair+Display:wght@700&family=Nunito:wght@400;500;600;700&display=swap');
         .ae-card { transition: transform 0.2s, box-shadow 0.2s; }
@@ -90,42 +87,62 @@ const AdminEvents = () => {
         </div>
       )}
 
-      {/* ── Header ── */}
-      <div style={{ display: "flex", alignItems: "flex-end", justifyContent: "space-between", flexWrap: "wrap", gap: 14, marginBottom: 28 }}>
-        <div>
-          <p style={{ fontSize: "0.68rem", letterSpacing: "0.18em", fontWeight: 700, color: "#e87c3e", textTransform: "uppercase", marginBottom: 4 }}>MANAGEMENT</p>
-          <h1 style={{ fontFamily: "'Playfair Display', serif", fontSize: "1.9rem", fontWeight: 700, color: "#2e1106" }}>Events</h1>
+      {/* ── Top Row: Summary Cards + Action Buttons in one line ── */}
+      <div style={{
+        display: "flex",
+        alignItems: "center",
+        justifyContent: "space-between",
+        flexWrap: "wrap",
+        gap: 16,
+        marginBottom: 24,
+        marginTop: 0
+      }}>
+        {/* Summary Cards Container */}
+        <div style={{
+          display: "flex",
+          flexWrap: "wrap",
+          gap: 14,
+          flex: 2
+        }}>
+          {[
+            { label: "Total Events",  value: events.length,                                            color: "#c0451a", bg: "#fff0ea", icon: <Calendar size={20} />    },
+            { label: "Upcoming",      value: events.filter(e => e.availableSeats > 0).length,          color: "#0e6eb8", bg: "#e7f3ff", icon: <Calendar size={20} />    },
+            { label: "Fully Booked",  value: events.filter(e => e.availableSeats === 0).length,        color: "#c0391a", bg: "#fdecea", icon: <Users size={20} />       },
+            { label: "Total Seats",   value: events.reduce((a, e) => a + (e.totalSeats || 0), 0).toLocaleString(), color: "#1a7a4a", bg: "#e8f7ef", icon: <DollarSign size={20}/> },
+          ].map((s, i) => (
+            <div key={i} style={{
+              background: "#fff",
+              borderRadius: 14,
+              padding: "12px 16px",
+              minWidth: "120px",
+              border: "1px solid rgba(192,69,26,0.11)",
+              boxShadow: "0 3px 12px rgba(192,69,26,0.07)",
+              position: "relative",
+              overflow: "hidden",
+              flex: 1
+            }}>
+              <div style={{ position: "absolute", top: 0, left: 0, right: 0, height: 3, background: s.color }} />
+              <div style={{ width: 32, height: 32, borderRadius: 10, background: s.bg, display: "flex", alignItems: "center", justifyContent: "center", color: s.color, marginBottom: 8 }}>{s.icon}</div>
+              <p style={{ fontSize: "1.3rem", fontWeight: 700, color: "#2e1106", lineHeight: 1, marginBottom: 2 }}>{s.value}</p>
+              <p style={{ fontSize: "0.65rem", color: "#b07b65", fontWeight: 600, textTransform: "uppercase", letterSpacing: "0.06em" }}>{s.label}</p>
+            </div>
+          ))}
         </div>
-        <div style={{ display: "flex", gap: 10, flexWrap: "wrap" }}>
+
+        {/* Action Buttons Container */}
+        <div style={{ display: "flex", gap: 12, alignItems: "center", flexShrink: 0 }}>
           <Link to="/events"
-            style={{ display: "inline-flex", alignItems: "center", gap: 7, background: "#fff", border: "1px solid rgba(192,69,26,0.22)", color: "#c0451a", padding: "10px 18px", borderRadius: 12, fontWeight: 700, fontSize: "0.85rem", textDecoration: "none" }}>
+            style={{ display: "inline-flex", alignItems: "center", gap: 7, background: "#fff", border: "1px solid rgba(192,69,26,0.22)", color: "#c0451a", padding: "10px 18px", borderRadius: 12, fontWeight: 700, fontSize: "0.85rem", textDecoration: "none", whiteSpace: "nowrap" }}>
             <ExternalLink size={14} /> View Public Events
           </Link>
           <Link to="/admin/events/new"
-            style={{ display: "inline-flex", alignItems: "center", gap: 8, background: "linear-gradient(135deg,#c0451a,#a03010)", color: "#fff", padding: "11px 22px", borderRadius: 12, fontWeight: 700, fontSize: "0.88rem", textDecoration: "none", boxShadow: "0 4px 14px rgba(192,69,26,0.3)" }}>
+            style={{ display: "inline-flex", alignItems: "center", gap: 8, background: "linear-gradient(135deg,#c0451a,#a03010)", color: "#fff", padding: "10px 22px", borderRadius: 12, fontWeight: 700, fontSize: "0.88rem", textDecoration: "none", boxShadow: "0 4px 14px rgba(192,69,26,0.3)", whiteSpace: "nowrap" }}>
             <Plus size={17} /> Add Event
           </Link>
         </div>
       </div>
 
-      {/* ── Summary Cards — live from API data ── */}
-      <div style={{ display: "grid", gridTemplateColumns: "repeat(auto-fill, minmax(160px,1fr))", gap: 14, marginBottom: 24 }}>
-        {[
-          { label: "Total Events",  value: events.length,                                            color: "#c0451a", bg: "#fff0ea", icon: <Calendar size={20} />    },
-          { label: "Upcoming",      value: events.filter(e => e.availableSeats > 0).length,          color: "#0e6eb8", bg: "#e7f3ff", icon: <Calendar size={20} />    },
-          { label: "Fully Booked",  value: events.filter(e => e.availableSeats === 0).length,        color: "#c0391a", bg: "#fdecea", icon: <Users size={20} />       },
-          { label: "Total Seats",   value: events.reduce((a, e) => a + (e.totalSeats || 0), 0).toLocaleString(), color: "#1a7a4a", bg: "#e8f7ef", icon: <DollarSign size={20}/> },
-        ].map((s, i) => (
-          <div key={i} style={{ background: "#fff", borderRadius: 14, padding: "16px", border: "1px solid rgba(192,69,26,0.11)", boxShadow: "0 3px 12px rgba(192,69,26,0.07)", position: "relative", overflow: "hidden" }}>
-            <div style={{ position: "absolute", top: 0, left: 0, right: 0, height: 3, background: s.color }} />
-            <div style={{ width: 38, height: 38, borderRadius: 10, background: s.bg, display: "flex", alignItems: "center", justifyContent: "center", color: s.color, marginBottom: 10 }}>{s.icon}</div>
-            <p style={{ fontSize: "1.4rem", fontWeight: 700, color: "#2e1106", lineHeight: 1, marginBottom: 3 }}>{s.value}</p>
-            <p style={{ fontSize: "0.7rem", color: "#b07b65", fontWeight: 600, textTransform: "uppercase", letterSpacing: "0.06em" }}>{s.label}</p>
-          </div>
-        ))}
-      </div>
-
-      {/* ── Filters ── */}
+      {/* ── Filters (search bar & status tags) ── */}
       <div style={{ background: "#fff", borderRadius: 14, padding: "16px 20px", border: "1px solid rgba(192,69,26,0.11)", boxShadow: "0 3px 12px rgba(192,69,26,0.06)", marginBottom: 18, display: "flex", gap: 12, flexWrap: "wrap", alignItems: "center" }}>
         <div style={{ position: "relative", flex: 1, minWidth: 200 }}>
           <Search size={15} style={{ position: "absolute", left: 12, top: "50%", transform: "translateY(-50%)", color: "#b07b65" }} />
@@ -147,7 +164,7 @@ const AdminEvents = () => {
         Showing <strong style={{ color: "#c0451a" }}>{filtered.length}</strong> of {events.length} events
       </p>
 
-      {/* ── Loading ── */}
+      {/* Loading */}
       {loading && (
         <div style={{ textAlign: "center", padding: "60px 24px", color: "#b07b65" }}>
           <div style={{ width: 36, height: 36, borderRadius: "50%", border: "3px solid #c0451a", borderTopColor: "transparent", margin: "0 auto 12px", animation: "spin 0.8s linear infinite" }} />
@@ -155,7 +172,7 @@ const AdminEvents = () => {
         </div>
       )}
 
-      {/* ── Events Grid ── */}
+      {/* Events Grid */}
       {!loading && (
         <div style={{ display: "grid", gridTemplateColumns: "repeat(auto-fill, minmax(300px,1fr))", gap: 18 }}>
           {filtered.map(ev => {
@@ -164,7 +181,6 @@ const AdminEvents = () => {
             return (
               <div key={ev._id} className="ae-card" style={{ background: "#fff", borderRadius: 16, border: "1px solid rgba(192,69,26,0.11)", boxShadow: "0 4px 16px rgba(192,69,26,0.07)", overflow: "hidden" }}>
 
-                {/* Thumbnail */}
                 {ev.thumbnail && (
                   <div style={{ overflow: "hidden", height: 150 }}>
                     <img src={ev.thumbnail} alt={ev.title} className="ae-img"
@@ -173,29 +189,25 @@ const AdminEvents = () => {
                   </div>
                 )}
 
-                {/* Top accent */}
                 <div style={{ height: 4, background: "linear-gradient(90deg,#c0451a,#e87c3e)" }} />
 
                 <div style={{ padding: "16px 18px" }}>
-                  {/* Title + status */}
                   <div style={{ display: "flex", alignItems: "flex-start", justifyContent: "space-between", marginBottom: 10 }}>
                     <h3 style={{ fontFamily: "'Playfair Display', serif", fontSize: "1rem", fontWeight: 700, color: "#2e1106", lineHeight: 1.3, flex: 1, paddingRight: 8, margin: 0 }}>{ev.title}</h3>
-                    <span style={{ background: s.bg, color: s.color, fontSize: "0.66rem", fontWeight: 700, padding: "3px 10px", borderRadius: 999, flexShrink: 0, whiteSpace: "nowrap" }}>{s.label}</span>
+                    <span style={{ background: s.bg, color: s.color, fontSize: "0.66rem", fontWeight: 700, padding: "3px 10px", borderRadius: 999, flexShrink: 0 }}>{s.label}</span>
                   </div>
 
-                  {/* Meta */}
                   <div style={{ display: "flex", flexDirection: "column", gap: 4, marginBottom: 12 }}>
                     <p style={{ display: "flex", alignItems: "center", gap: 6, fontSize: "0.76rem", color: "#b07b65", margin: 0 }}>
                       <Calendar size={12} color="#c0451a" />
                       {ev.date ? new Date(ev.date).toLocaleDateString("en-IN", { day: "numeric", month: "short", year: "numeric" }) : "—"}
                       {ev.time ? ` · ${ev.time}` : ""}
                     </p>
-                    <p style={{ display: "flex", alignItems: "center", gap: 6, fontSize: "0.76rem", color: "#b07b65", margin: 0, whiteSpace: "nowrap", overflow: "hidden", textOverflow: "ellipsis" }}>
+                    <p style={{ display: "flex", alignItems: "center", gap: 6, fontSize: "0.76rem", color: "#b07b65", margin: 0 }}>
                       <MapPin size={12} color="#c0451a" />{ev.location}
                     </p>
                   </div>
 
-                  {/* Occupancy bar */}
                   <div style={{ marginBottom: 12 }}>
                     <div style={{ display: "flex", justifyContent: "space-between", marginBottom: 4 }}>
                       <span style={{ fontSize: "0.7rem", color: "#b07b65", fontWeight: 600 }}>Occupancy</span>
@@ -208,34 +220,26 @@ const AdminEvents = () => {
                     </div>
                   </div>
 
-                  {/* Price + Action buttons */}
                   <div style={{ display: "flex", alignItems: "center", justifyContent: "space-between" }}>
                     <span style={{ fontFamily: "'Playfair Display', serif", fontSize: "1.1rem", fontWeight: 700, color: "#c0451a" }}>
                       ₹{ev.price?.toLocaleString()}
                     </span>
                     <div style={{ display: "flex", gap: 7 }}>
-
-                      {/* View — public event detail page with real MongoDB _id */}
                       <button className="ae-btn" title="View public page"
                         onClick={() => navigate(`/events/${ev._id}`)}
                         style={{ width: 32, height: 32, borderRadius: 8, background: "#e7f3ff", display: "flex", alignItems: "center", justifyContent: "center", color: "#0e6eb8" }}>
                         <Eye size={14} />
                       </button>
-
-                      {/* Edit — passes real MongoDB _id to /admin/events/:id/edit */}
                       <button className="ae-btn" title="Edit event"
                         onClick={() => navigate(`/admin/events/${ev._id}/edit`)}
                         style={{ width: 32, height: 32, borderRadius: 8, background: "#fff8e1", display: "flex", alignItems: "center", justifyContent: "center", color: "#b5860d" }}>
                         <Edit2 size={14} />
                       </button>
-
-                      {/*  Delete — calls real API with MongoDB _id */}
                       <button className="ae-btn" title="Delete event"
                         onClick={() => deleteEvent(ev._id, ev.title)}
                         style={{ width: 32, height: 32, borderRadius: 8, background: "#fdecea", display: "flex", alignItems: "center", justifyContent: "center", color: "#c0391a" }}>
                         <Trash2 size={14} />
                       </button>
-
                     </div>
                   </div>
                 </div>

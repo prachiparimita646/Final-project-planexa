@@ -1,135 +1,94 @@
 const Event = require("../model/Event");
 
-// CREATE EVENT 
-exports.createEvent = async (req, res) => {
-    try {
-        const {
-            title,
-            description,
-            date,
-            time,
-            location,
-            price,
-            totalSeats,
-            availableSeats,
-        } = req.body;
-
-        // Thumbnail (required)
-        const thumbnailUrl = req.files?.thumbnail
-            ? req.files.thumbnail[0].path
-            : null;
-
-        // Multiple images
-        const imageUrls = req.files?.images
-            ? req.files.images.map((file) => file.path)
-            : [];
-
-        const event = await Event.create({
-            title,
-            description,
-            date,
-            time,
-            location,
-            price,
-            totalSeats,
-            availableSeats,
-            thumbnail: thumbnailUrl,
-            images: imageUrls,
-        });
-
-        res.status(201).json({ success: true, event });
-    } catch (error) {
-        res.status(500).json({ message: error.message });
-    }
-};
-
-
-
-//  GET ALL EVENTS 
+// ── Get all events ──
 exports.getAllEvents = async (req, res) => {
-    try {
-        const events = await Event.find().sort({ createdAt: -1 });
-        res.json(events);
-    } catch (error) {
-        res.status(500).json({ message: error.message });
-    }
+  try {
+    const events = await Event.find().sort({ date: 1 });
+    res.json(events);
+  } catch (err) {
+    res.status(500).json({ message: err.message });
+  }
 };
 
-
-
-//  GET SINGLE EVENT 
-exports.getSingleEvent = async (req, res) => {
-    try {
-        const event = await Event.findById(req.params.id);
-        if (!event)
-            return res.status(404).json({ message: "Event not found" });
-
-        res.json(event);
-    } catch (error) {
-        res.status(500).json({ message: error.message });
-    }
+// ── Get single event ──
+exports.getEventById = async (req, res) => {
+  try {
+    const event = await Event.findById(req.params.id);
+    if (!event) return res.status(404).json({ message: "Event not found" });
+    res.json(event);
+  } catch (err) {
+    res.status(500).json({ message: err.message });
+  }
 };
 
+// ── Create event (admin) ──
+exports.createEvent = async (req, res) => {
+  try {
+    const {
+      title, description, category, date, time,
+      location, price, totalSeats, availableSeats, thumbnail,
+    } = req.body;
 
+    if (!title || !date || !location || !price || !totalSeats) {
+      return res.status(400).json({ message: "Please fill all required fields" });
+    }
 
-//  UPDATE EVENT
+    const event = await Event.create({
+      title,
+      description,
+      category:       category || "Other",
+      date,
+      time,
+      location,
+      price:          Number(price),
+      totalSeats:     Number(totalSeats),
+      availableSeats: availableSeats !== undefined ? Number(availableSeats) : Number(totalSeats),
+      thumbnail:      thumbnail || "",
+    });
+
+    res.status(201).json(event);
+  } catch (err) {
+    res.status(500).json({ message: err.message });
+  }
+};
+
+// ── Update event (admin) ──
 exports.updateEvent = async (req, res) => {
-    try {
-        const event = await Event.findById(req.params.id);
+  try {
+    const {
+      title, description, category, date, time,
+      location, price, totalSeats, availableSeats, thumbnail,
+    } = req.body;
 
-        if (!event) {
-            return res.status(404).json({ message: "Event not found" });
-        }
+    const event = await Event.findById(req.params.id);
+    if (!event) return res.status(404).json({ message: "Event not found" });
 
-        // Update text fields
-        event.title = req.body.title || event.title;
-        event.description = req.body.description || event.description;
-        event.date = req.body.date || event.date;
-        event.time = req.body.time || event.time;
-        event.location = req.body.location || event.location;
-        event.price = req.body.price || event.price;
-        event.totalSeats = req.body.totalSeats || event.totalSeats;
-        event.availableSeats =
-            req.body.availableSeats || event.availableSeats;
+    if (title)          event.title          = title;
+    if (description)    event.description    = description;
+    if (category)       event.category       = category;
+    if (date)           event.date           = date;
+    if (time)           event.time           = time;
+    if (location)       event.location       = location;
+    if (price)          event.price          = Number(price);
+    if (totalSeats)     event.totalSeats     = Number(totalSeats);
+    if (availableSeats !== undefined) event.availableSeats = Number(availableSeats);
+    if (thumbnail !== undefined)      event.thumbnail      = thumbnail;
 
-        // If new thumbnail uploaded
-        if (req.files?.thumbnail) {
-            event.thumbnail = req.files.thumbnail[0].path;
-        }
-
-        // If new images uploaded
-        if (req.files?.images) {
-            event.images = req.files.images.map((file) => file.path);
-        }
-
-        await event.save();
-
-        res.json({
-            success: true,
-            message: "Event updated successfully",
-            event,
-        });
-    } catch (error) {
-        res.status(500).json({ message: error.message });
-    }
+    await event.save();
+    res.json(event);
+  } catch (err) {
+    res.status(500).json({ message: err.message });
+  }
 };
 
-
-
-//  DELETE EVENT
+// ── Delete event (admin) ──
 exports.deleteEvent = async (req, res) => {
-    try {
-        const event = await Event.findById(req.params.id);
-        if (!event)
-            return res.status(404).json({ message: "Event not found" });
-
-        await event.deleteOne();
-
-        res.json({
-            success: true,
-            message: "Event deleted successfully",
-        });
-    } catch (error) {
-        res.status(500).json({ message: error.message });
-    }
+  try {
+    const event = await Event.findById(req.params.id);
+    if (!event) return res.status(404).json({ message: "Event not found" });
+    await Event.findByIdAndDelete(req.params.id);
+    res.json({ success: true, message: "Event deleted" });
+  } catch (err) {
+    res.status(500).json({ message: err.message });
+  }
 };

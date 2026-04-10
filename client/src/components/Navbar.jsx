@@ -146,18 +146,10 @@ const Navbar = () => {
         <div style={{ maxWidth: 1180, margin: "0 auto", padding: "0 24px" }}>
           <div style={{ display: "flex", alignItems: "center", justifyContent: "space-between", height: 62 }}>
 
-            {/* ── Logo ── */}
-            <Link to="/" style={{ textDecoration: "none", display: "flex", alignItems: "center", gap: 10 }}>
-            
-              <div style={{ display: "flex", flexDirection: "column", gap: 3.5 }}>
-                <span style={{ width: 20, height: 2, background: "linear-gradient(90deg,#8b5e3c,#c4945a)", borderRadius: 999, display: "block" }} />
-                <span style={{ width: 14, height: 2, background: "linear-gradient(90deg,#8b5e3c,#c4945a)", borderRadius: 999, display: "block" }} />
-                <span style={{ width: 20, height: 2, background: "linear-gradient(90deg,#8b5e3c,#c4945a)", borderRadius: 999, display: "block" }} />
-              </div>
-              <div style={{ display: "flex", flexDirection: "column", lineHeight: 1.1 }}>
-                <span style={{ fontFamily: "'Cormorant Garamond', serif", fontSize: "1.25rem", fontWeight: 700, color: "#2c1a0e", letterSpacing: "-0.01em" }}>The Event Utsava</span>
-                <span style={{ fontFamily: "'Cormorant Garamond', serif", fontSize: "0.78rem", fontWeight: 600, color: "#c4945a", fontStyle: "italic", letterSpacing: "0.04em" }}>by Planexa</span>
-              </div>
+            {/* ── Logo (text only) ── */}
+            <Link to="/" style={{ textDecoration: "none", display: "flex", flexDirection: "column", lineHeight: 1.1 }}>
+              <span style={{ fontFamily: "'Cormorant Garamond', serif", fontSize: "1.25rem", fontWeight: 700, color: "#2c1a0e", letterSpacing: "-0.01em" }}>The Event Utsava</span>
+              <span style={{ fontFamily: "'Cormorant Garamond', serif", fontSize: "0.78rem", fontWeight: 600, color: "#c4945a", fontStyle: "italic", letterSpacing: "0.04em" }}>by Planexa</span>
             </Link>
 
             {/* ── Desktop Nav ── */}
