@@ -10,6 +10,7 @@ const Register = () => {
   const [adminKey,  setAdminKey]  = useState('');
   const [showPass,  setShowPass]  = useState(false);
   const [showKey,   setShowKey]   = useState(false);
+  const [showAdminField, setShowAdminField] = useState(false);
   const [error,     setError]     = useState('');
   const [loading,   setLoading]   = useState(false);
 
@@ -21,8 +22,10 @@ const Register = () => {
     setError('');
     setLoading(true);
 
-    // Pass adminKey to AuthContext register function
-    const result = await register(name, email, password, adminKey || undefined);
+    // Only pass adminKey if user actually typed one, otherwise undefined (regular user)
+    const keyToSend = adminKey.trim() !== '' ? adminKey.trim() : undefined;
+
+    const result = await register(name, email, password, keyToSend);
 
     setLoading(false);
     if (result.success) {
@@ -45,8 +48,10 @@ const Register = () => {
       <style>{`
         @import url('https://fonts.googleapis.com/css2?family=Cormorant+Garamond:wght@600;700&family=Jost:wght@300;400;500;600;700&display=swap');
         .rg-inp:focus { border-color: #8b5e3c !important; box-shadow: 0 0 0 3px rgba(139,94,60,0.1); }
-        .rg-btn:hover { filter: brightness(1.08); transform: translateY(-1px); }
+        .rg-btn:hover:not(:disabled) { filter: brightness(1.08); transform: translateY(-1px); }
+        .admin-toggle:hover { color: #8b5e3c !important; }
         @keyframes fadeUp { from{opacity:0;transform:translateY(16px)} to{opacity:1;transform:translateY(0)} }
+        @keyframes slideDown { from{opacity:0;transform:translateY(-8px)} to{opacity:1;transform:translateY(0)} }
       `}</style>
 
       <div style={{ width: '100%', maxWidth: 440, background: '#faf4ec', borderRadius: 20, border: '1px solid rgba(139,94,60,0.15)', boxShadow: '0 12px 40px rgba(139,94,60,0.12)', overflow: 'hidden', animation: 'fadeUp 0.5s ease both' }}>
@@ -78,7 +83,7 @@ const Register = () => {
             <div style={{ position: 'relative' }}>
               <User size={15} style={{ position: 'absolute', left: 13, top: '50%', transform: 'translateY(-50%)', color: '#a88972' }} />
               <input className="rg-inp" type="text" value={name} onChange={e => setName(e.target.value)}
-                placeholder="Priya Sharma" required style={inp} />
+                placeholder="Your full name" required style={inp} />
             </div>
           </div>
 
@@ -106,25 +111,76 @@ const Register = () => {
             </div>
           </div>
 
-          {/* Admin Key — optional */}
+          {/* Admin key toggle — hidden by default */}
           <div>
-            <label style={{ fontSize: '0.72rem', fontWeight: 700, color: '#6b4c35', textTransform: 'uppercase', letterSpacing: '0.08em', marginBottom: 7, display: 'block' }}>
-              Admin Key <span style={{ fontWeight: 400, textTransform: 'none', letterSpacing: 0, color: '#a88972' }}>(optional — leave blank for regular account)</span>
-            </label>
-            <div style={{ position: 'relative' }}>
-              <Key size={15} style={{ position: 'absolute', left: 13, top: '50%', transform: 'translateY(-50%)', color: '#a88972' }} />
-              <input className="rg-inp" type={showKey ? 'text' : 'password'} value={adminKey} onChange={e => setAdminKey(e.target.value)}
-                placeholder="Enter admin key if you have one" style={{ ...inp, paddingRight: 40 }} />
-              <button type="button" onClick={() => setShowKey(!showKey)}
-                style={{ position: 'absolute', right: 12, top: '50%', transform: 'translateY(-50%)', background: 'none', border: 'none', cursor: 'pointer', color: '#a88972', padding: 0, display: 'flex' }}>
-                {showKey ? <EyeOff size={15} /> : <Eye size={15} />}
-              </button>
-            </div>
+            <button
+              type="button"
+              className="admin-toggle"
+              onClick={() => { setShowAdminField(!showAdminField); if (showAdminField) setAdminKey(''); }}
+              style={{
+                background: 'none', border: 'none', cursor: 'pointer',
+                fontSize: '0.78rem', color: '#a88972',
+                fontFamily: 'inherit', padding: 0,
+                display: 'flex', alignItems: 'center', gap: 5,
+                transition: 'color 0.15s',
+              }}
+            >
+              <Key size={13} />
+              {showAdminField ? 'Remove admin key' : 'Have an admin key? Click here'}
+            </button>
+
+            {showAdminField && (
+              <div style={{ marginTop: 10, animation: 'slideDown 0.2s ease both' }}>
+                <label style={{ fontSize: '0.72rem', fontWeight: 700, color: '#6b4c35', textTransform: 'uppercase', letterSpacing: '0.08em', marginBottom: 7, display: 'block' }}>
+                  Admin Key
+                </label>
+                <div style={{ position: 'relative' }}>
+                  <Key size={15} style={{ position: 'absolute', left: 13, top: '50%', transform: 'translateY(-50%)', color: '#a88972' }} />
+                  <input
+                    className="rg-inp"
+                    type={showKey ? 'text' : 'password'}
+                    value={adminKey}
+                    onChange={e => setAdminKey(e.target.value)}
+                    placeholder="Enter your admin key"
+                    style={{ ...inp, paddingRight: 40 }}
+                  />
+                  <button type="button" onClick={() => setShowKey(!showKey)}
+                    style={{ position: 'absolute', right: 12, top: '50%', transform: 'translateY(-50%)', background: 'none', border: 'none', cursor: 'pointer', color: '#a88972', padding: 0, display: 'flex' }}>
+                    {showKey ? <EyeOff size={15} /> : <Eye size={15} />}
+                  </button>
+                </div>
+              </div>
+            )}
+          </div>
+
+          {/* Role indicator */}
+          <div style={{
+            background: 'rgba(139,94,60,0.06)', border: '1px solid rgba(139,94,60,0.12)',
+            borderRadius: 8, padding: '8px 12px',
+            fontSize: '0.78rem', color: '#8b5e3c',
+            display: 'flex', alignItems: 'center', gap: 6,
+          }}>
+            <span>👤</span>
+            <span>
+              Registering as: <strong>{adminKey.trim() ? 'Administrator' : 'Regular User'}</strong>
+            </span>
           </div>
 
           {/* Submit */}
-          <button type="submit" className="rg-btn" disabled={loading}
-            style={{ width: '100%', padding: '13px', borderRadius: 12, background: loading ? '#dfc9af' : 'linear-gradient(135deg,#c4945a,#8b5e3c)', color: '#fff', fontWeight: 700, fontSize: '0.95rem', border: 'none', cursor: loading ? 'not-allowed' : 'pointer', display: 'flex', alignItems: 'center', justifyContent: 'center', gap: 8, boxShadow: loading ? 'none' : '0 4px 16px rgba(139,94,60,0.3)', transition: 'all 0.18s', fontFamily: 'inherit', marginTop: 4 }}>
+          <button
+            type="submit"
+            className="rg-btn"
+            disabled={loading}
+            style={{
+              width: '100%', padding: '13px', borderRadius: 12,
+              background: loading ? '#dfc9af' : 'linear-gradient(135deg,#c4945a,#8b5e3c)',
+              color: '#fff', fontWeight: 700, fontSize: '0.95rem',
+              border: 'none', cursor: loading ? 'not-allowed' : 'pointer',
+              display: 'flex', alignItems: 'center', justifyContent: 'center', gap: 8,
+              boxShadow: loading ? 'none' : '0 4px 16px rgba(139,94,60,0.3)',
+              transition: 'all 0.18s', fontFamily: 'inherit', marginTop: 4,
+            }}
+          >
             {loading ? 'Creating account...' : <> Create Account <ChevronRight size={16} /></>}
           </button>
 
