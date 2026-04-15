@@ -45,7 +45,7 @@ const ContactUs = () => {
 
   // Contact data with clickable links
   const contactLinks = {
-    email: { value: "support@planexa.com", href: "mailto:support@planexa.com" },
+    email: { value: "supportplanexa@gmail.com", href: "mailto:supportplanexa@gmail.com" },
     phone: { value: "+91 98765 43210", href: "tel:+919876543210" },
     location: { value: "Bhubaneswar, Odisha", href: "https://maps.google.com/?q=Bhubaneswar+Odisha" }
   };

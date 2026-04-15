@@ -1,53 +1,414 @@
+// src/components/Footer.jsx
 import { Link } from "react-router-dom";
-import { MessageCircle } from "lucide-react";
+import { MessageCircle, Mail, Phone, Check } from "lucide-react";
+import { useState } from "react";
 
-const Footer = () => (
-  <footer style={{
-    background: "#e2d0bc",
-    borderTop: "1px solid rgba(139,94,60,0.15)",
-    padding: "28px 32px",
-    display: "flex", alignItems: "center", justifyContent: "space-between",
-    flexWrap: "wrap", gap: 16,
-    fontFamily: "'Jost', sans-serif",
-  }}>
-    <div style={{ display: "flex", flexDirection: "column", gap: 3 }}>
-      <p style={{ fontFamily: "'Cormorant Garamond', serif", fontSize: "0.95rem", fontWeight: 700, color: "#2c1a0e", margin: 0 }}>
-        The Event Utsava by Planexa
-      </p>
-      <p style={{ fontSize: "0.74rem", color: "#a88972", margin: 0 }}>© 2026 All rights reserved.</p>
-    </div>
+const CONTACT_EMAIL = "supportplanexa@gmail.com";
+const CONTACT_PHONE = "+919876543210";
+const WHATSAPP_NUMBER = "919800100001";
+// ============================================================
 
-    <div style={{ display: "flex", gap: 10, alignItems: "center" }}>
-      {/* WhatsApp */}
-      <a href="https://wa.me/919800100001" target="_blank" rel="noopener noreferrer"
-        style={{ width: 36, height: 36, borderRadius: 10, display: "flex", alignItems: "center", justifyContent: "center", textDecoration: "none", border: "1px solid rgba(139,94,60,0.15)", background: "#e8f5e9", color: "#25D366", transition: "all 0.18s" }}
-        onMouseEnter={e => { e.currentTarget.style.background = "#25D366"; e.currentTarget.style.color = "#fff"; }}
-        onMouseLeave={e => { e.currentTarget.style.background = "#e8f5e9"; e.currentTarget.style.color = "#25D366"; }}>
-        <svg width="18" height="18" viewBox="0 0 24 24" fill="currentColor"><path d="M17.472 14.382c-.297-.149-1.758-.867-2.03-.967-.273-.099-.471-.148-.67.15-.197.297-.767.966-.94 1.164-.173.199-.347.223-.644.075-.297-.15-1.255-.463-2.39-1.475-.883-.788-1.48-1.761-1.653-2.059-.173-.297-.018-.458.13-.606.134-.133.298-.347.446-.52.149-.174.198-.298.298-.497.099-.198.05-.371-.025-.52-.075-.149-.669-1.612-.916-2.207-.242-.579-.487-.5-.669-.51-.173-.008-.371-.01-.57-.01-.198 0-.52.074-.792.372-.272.297-1.04 1.016-1.04 2.479 0 1.462 1.065 2.875 1.213 3.074.149.198 2.096 3.2 5.077 4.487.709.306 1.262.489 1.694.625.712.227 1.36.195 1.871.118.571-.085 1.758-.719 2.006-1.413.248-.694.248-1.289.173-1.413-.074-.124-.272-.198-.57-.347m-5.421 7.403h-.004a9.87 9.87 0 01-5.031-1.378l-.361-.214-3.741.982.998-3.648-.235-.374a9.86 9.86 0 01-1.51-5.26c.001-5.45 4.436-9.884 9.888-9.884 2.64 0 5.122 1.03 6.988 2.898a9.825 9.825 0 012.893 6.994c-.003 5.45-4.437 9.884-9.885 9.884m8.413-18.297A11.815 11.815 0 0012.05 0C5.495 0 .16 5.335.157 11.892c0 2.096.547 4.142 1.588 5.945L.057 24l6.305-1.654a11.882 11.882 0 005.683 1.448h.005c6.554 0 11.89-5.335 11.893-11.893a11.821 11.821 0 00-3.48-8.413z"/></svg>
-      </a>
-      {/* Facebook */}
-      <a href="https://facebook.com/planexa" target="_blank" rel="noopener noreferrer"
-        style={{ width: 36, height: 36, borderRadius: 10, display: "flex", alignItems: "center", justifyContent: "center", textDecoration: "none", border: "1px solid rgba(139,94,60,0.15)", background: "#e8f0fe", color: "#1877F2", transition: "all 0.18s" }}
-        onMouseEnter={e => { e.currentTarget.style.background = "#1877F2"; e.currentTarget.style.color = "#fff"; }}
-        onMouseLeave={e => { e.currentTarget.style.background = "#e8f0fe"; e.currentTarget.style.color = "#1877F2"; }}>
-        <svg width="18" height="18" viewBox="0 0 24 24" fill="currentColor"><path d="M24 12.073c0-6.627-5.373-12-12-12s-12 5.373-12 12c0 5.99 4.388 10.954 10.125 11.854v-8.385H7.078v-3.47h3.047V9.43c0-3.007 1.792-4.669 4.533-4.669 1.312 0 2.686.235 2.686.235v2.953H15.83c-1.491 0-1.956.925-1.956 1.874v2.25h3.328l-.532 3.47h-2.796v8.385C19.612 23.027 24 18.062 24 12.073z"/></svg>
-      </a>
-      {/* Instagram */}
-      <a href="https://instagram.com/planexa" target="_blank" rel="noopener noreferrer"
-        style={{ width: 36, height: 36, borderRadius: 10, display: "flex", alignItems: "center", justifyContent: "center", textDecoration: "none", border: "1px solid rgba(139,94,60,0.15)", background: "#fce4ec", color: "#E1306C", transition: "all 0.18s" }}
-        onMouseEnter={e => { e.currentTarget.style.background = "linear-gradient(135deg,#833ab4,#fd1d1d,#fcb045)"; e.currentTarget.style.color = "#fff"; }}
-        onMouseLeave={e => { e.currentTarget.style.background = "#fce4ec"; e.currentTarget.style.color = "#E1306C"; }}>
-        <svg width="18" height="18" viewBox="0 0 24 24" fill="currentColor"><path d="M12 2.163c3.204 0 3.584.012 4.85.07 3.252.148 4.771 1.691 4.919 4.919.058 1.265.069 1.645.069 4.849 0 3.205-.012 3.584-.069 4.849-.149 3.225-1.664 4.771-4.919 4.919-1.266.058-1.644.07-4.85.07-3.204 0-3.584-.012-4.849-.07-3.26-.149-4.771-1.699-4.919-4.92-.058-1.265-.07-1.644-.07-4.849 0-3.204.013-3.583.07-4.849.149-3.227 1.664-4.771 4.919-4.919 1.266-.057 1.645-.069 4.849-.069zM12 0C8.741 0 8.333.014 7.053.072 2.695.272.273 2.69.073 7.052.014 8.333 0 8.741 0 12c0 3.259.014 3.668.072 4.948.2 4.358 2.618 6.78 6.98 6.98C8.333 23.986 8.741 24 12 24c3.259 0 3.668-.014 4.948-.072 4.354-.2 6.782-2.618 6.979-6.98.059-1.28.073-1.689.073-4.948 0-3.259-.014-3.667-.072-4.947-.196-4.354-2.617-6.78-6.979-6.98C15.668.014 15.259 0 12 0zm0 5.838a6.162 6.162 0 100 12.324 6.162 6.162 0 000-12.324zM12 16a4 4 0 110-8 4 4 0 010 8zm6.406-11.845a1.44 1.44 0 100 2.881 1.44 1.44 0 000-2.881z"/></svg>
-      </a>
-    </div>
+const Footer = () => {
+  const [copiedField, setCopiedField] = useState(null);
 
-    <Link to="/feedback"
-      style={{ display: "inline-flex", alignItems: "center", gap: 6, color: "#8b5e3c", fontSize: "0.84rem", fontWeight: 600, textDecoration: "none", padding: "8px 18px", borderRadius: 9, border: "1px solid rgba(139,94,60,0.15)", background: "rgba(139,94,60,0.06)", transition: "all 0.18s" }}
-      onMouseEnter={e => { e.currentTarget.style.background = "#8b5e3c"; e.currentTarget.style.color = "#fff"; }}
-      onMouseLeave={e => { e.currentTarget.style.background = "rgba(139,94,60,0.06)"; e.currentTarget.style.color = "#8b5e3c"; }}>
-      <MessageCircle size={15} /> Feedback
-    </Link>
-  </footer>
+  // Copy to clipboard with fallback support
+  const copyToClipboard = async (text, field) => {
+    try {
+      if (navigator.clipboard && window.isSecureContext) {
+        await navigator.clipboard.writeText(text);
+      } else {
+        // Fallback for non-secure contexts
+        const textArea = document.createElement("textarea");
+        textArea.value = text;
+        textArea.style.position = "fixed";
+        textArea.style.opacity = "0";
+        document.body.appendChild(textArea);
+        textArea.focus();
+        textArea.select();
+        document.execCommand("copy");
+        document.body.removeChild(textArea);
+      }
+      setCopiedField(field);
+      setTimeout(() => setCopiedField(null), 2000);
+    } catch (err) {
+      console.error("Failed to copy:", err);
+    }
+  };
+
+  return (
+    <footer
+      style={{
+        fontFamily: "'Jost', sans-serif",
+        background: "#351a08",
+        color: "#f5ece0",
+        position: "relative",
+        overflow: "hidden",
+      }}
+    >
+      {/* Google Fonts */}
+      <style>{`
+        @import url('https://fonts.googleapis.com/css2?family=Cormorant+Garamond:ital,wght@0,600;0,700;1,600;1,700&family=Jost:wght@300;400;500;600;700&display=swap');
+
+        .ft-social { transition: all 0.18s; }
+        .ft-social:hover { transform: translateY(-2px) scale(1.08) !important; }
+
+        .ft-link { transition: color 0.15s; }
+        .ft-link:hover { color: #e8c98a !important; }
+
+        .ft-fb:hover {
+          background: #e8c98a !important;
+          color: #351a08 !important;
+          border-color: #e8c98a !important;
+        }
+
+        .contact-item { cursor: pointer; transition: all 0.2s; }
+        .contact-item:hover { opacity: 0.85; }
+
+        .toast-copy {
+          position: fixed;
+          bottom: 30px;
+          left: 50%;
+          transform: translateX(-50%);
+          background: #e8c98a;
+          color: #351a08;
+          padding: 8px 16px;
+          border-radius: 40px;
+          font-size: 0.8rem;
+          font-weight: 600;
+          z-index: 9999;
+          animation: fadeInUp 0.2s ease;
+          white-space: nowrap;
+          box-shadow: 0 4px 12px rgba(0,0,0,0.2);
+          display: flex;
+          align-items: center;
+          gap: 6px;
+        }
+
+        @keyframes fadeInUp {
+          from { opacity: 0; transform: translateX(-50%) translateY(10px); }
+          to { opacity: 1; transform: translateX(-50%) translateY(0); }
+        }
+      `}</style>
+
+      {/* Toast notification */}
+      {copiedField && (
+        <div className="toast-copy">
+          <Check size={14} />
+          {copiedField === "email"
+            ? "Email copied!"
+            : "Phone number copied!"}
+        </div>
+      )}
+
+      {/* Top gold accent */}
+      <div
+        style={{
+          height: 2,
+          background:
+            "linear-gradient(90deg,#8b5e3c,#c4945a,#e8c98a,#c4945a,#8b5e3c)",
+        }}
+      />
+
+      <div style={{ maxWidth: 1180, margin: "0 auto", padding: "28px 32px" }}>
+        {/* Main Row */}
+        <div
+          style={{
+            display: "flex",
+            alignItems: "flex-start",
+            justifyContent: "space-between",
+            flexWrap: "wrap",
+            gap: 28,
+            marginBottom: 22,
+          }}
+        >
+          {/* Brand Section */}
+          <div style={{ minWidth: 180 }}>
+            <p
+              style={{
+                fontFamily: "'Cormorant Garamond', serif",
+                fontSize: "1.05rem",
+                fontWeight: 700,
+                margin: 0,
+              }}
+            >
+              The Event Utsava
+            </p>
+            <p
+              style={{
+                fontFamily: "'Cormorant Garamond', serif",
+                fontSize: "0.8rem",
+                fontStyle: "italic",
+                color: "#e8c98a",
+                margin: "2px 0 10px",
+              }}
+            >
+              by Planexa
+            </p>
+            <p
+              style={{
+                fontSize: "0.76rem",
+                color: "rgba(245,236,224,0.55)",
+                lineHeight: 1.7,
+                maxWidth: 200,
+              }}
+            >
+              India's premier event management platform.
+            </p>
+
+            {/* Social Icons */}
+            <div style={{ display: "flex", gap: 8, marginTop: 14 }}>
+              {/* WhatsApp */}
+              <a
+                href={`https://wa.me/${WHATSAPP_NUMBER}`}
+                target="_blank"
+                rel="noopener noreferrer"
+                className="ft-social"
+                style={socialStyle("#25D366")}
+              >
+                <MessageCircle size={15} />
+              </a>
+
+              {/* Facebook */}
+              <a
+                href="https://facebook.com/planexa"
+                target="_blank"
+                rel="noopener noreferrer"
+                className="ft-social"
+                style={socialStyle("#1877F2")}
+              >
+                <svg width="15" height="15" viewBox="0 0 24 24" fill="currentColor">
+                  <path d="M24 12.073C24 5.446 18.627 0 12 0S0 5.446 0 12.073c0 5.99 4.388 10.954 10.125 11.854v-8.385H7.078v-3.47h3.047V9.43c0-3.007 1.792-4.669 4.533-4.669 1.312 0 2.686.235 2.686.235v2.953H15.83c-1.491 0-1.956.925-1.956 1.874v2.25h3.328l-.532 3.47h-2.796v8.385C19.612 23.027 24 18.062 24 12.073z" />
+                </svg>
+              </a>
+
+              {/* Instagram */}
+              <a
+                href="https://instagram.com/planexa"
+                target="_blank"
+                rel="noopener noreferrer"
+                className="ft-social"
+                style={socialStyle("#E1306C")}
+              >
+                <svg width="15" height="15" viewBox="0 0 24 24" fill="currentColor">
+                  <path d="M12 0C8.741 0 8.333.014 7.053.072 2.695.272.273 2.69.073 7.052.014 8.333 0 8.741 0 12s.014 3.668.072 4.948c.2 4.358 2.618 6.78 6.98 6.98C8.333 23.986 8.741 24 12 24s3.668-.014 4.948-.072c4.354-.2 6.782-2.618 6.979-6.98.059-1.28.073-1.689.073-4.948s-.014-3.667-.072-4.947c-.196-4.354-2.617-6.78-6.979-6.98C15.668.014 15.259 0 12 0z" />
+                </svg>
+              </a>
+            </div>
+          </div>
+
+          {/* Navigation */}
+          <FooterLinks
+            title="Navigation"
+            links={[
+              { to: "/", label: "Home" },
+              { to: "/about", label: "About" },
+              { to: "/events", label: "Events" },
+              { to: "/contact", label: "Contact" },
+            ]}
+          />
+
+          {/* Account */}
+          <FooterLinks
+            title="Account"
+            links={[
+              { to: "/login", label: "Login" },
+              { to: "/register", label: "Register" },
+              { to: "/my-bookings", label: "My Bookings" },
+              { to: "/feedback", label: "Feedback" },
+            ]}
+          />
+
+          {/* Contact Section */}
+          <div>
+            <SectionTitle title="Contact" />
+
+            <div style={{ display: "flex", flexDirection: "column", gap: 10 }}>
+              {/* Email */}
+              <a
+                href={`mailto:${CONTACT_EMAIL}`}
+                className="contact-item"
+                onClick={() => copyToClipboard(CONTACT_EMAIL, "email")}
+                style={contactItemStyle}
+              >
+                <IconBox>
+                  {copiedField === "email" ? (
+                    <Check size={13} />
+                  ) : (
+                    <Mail size={13} />
+                  )}
+                </IconBox>
+                <span style={contactTextStyle}>{CONTACT_EMAIL}</span>
+              </a>
+
+              {/* Phone */}
+              <a
+                href={`tel:${CONTACT_PHONE}`}
+                className="contact-item"
+                onClick={() => copyToClipboard(CONTACT_PHONE, "phone")}
+                style={contactItemStyle}
+              >
+                <IconBox>
+                  {copiedField === "phone" ? (
+                    <Check size={13} />
+                  ) : (
+                    <Phone size={13} />
+                  )}
+                </IconBox>
+                <span style={contactTextStyle}>{CONTACT_PHONE}</span>
+              </a>
+            </div>
+          </div>
+        </div>
+
+        {/* Divider */}
+        <div
+          style={{
+            height: 1,
+            background: "rgba(232,201,138,0.15)",
+            marginBottom: 18,
+          }}
+        />
+
+        {/* Bottom Bar */}
+        <div
+          style={{
+            display: "flex",
+            alignItems: "center",
+            justifyContent: "space-between",
+            flexWrap: "wrap",
+            gap: 10,
+          }}
+        >
+          <p style={{ fontSize: "0.72rem", color: "rgba(245,236,224,0.4)" }}>
+            © 2026 The Event Utsava by Planexa. All rights reserved.
+          </p>
+
+          <Link to="/feedback" className="ft-fb" style={feedbackButtonStyle}>
+            <MessageCircle size={13} /> Feedback
+          </Link>
+
+          <p
+            style={{
+              fontSize: "0.68rem",
+              color: "rgba(232,201,138,0.6)",
+              fontStyle: "italic",
+            }}
+          >
+            "Craft moments that last forever"
+          </p>
+        </div>
+      </div>
+    </footer>
+  );
+};
+
+/* ---------------- Helper Components & Styles ---------------- */
+
+const SectionTitle = ({ title }) => (
+  <p
+    style={{
+      fontSize: "0.6rem",
+      letterSpacing: "0.16em",
+      fontWeight: 700,
+      color: "#e8c98a",
+      textTransform: "uppercase",
+      marginBottom: 14,
+    }}
+  >
+    {title}
+  </p>
 );
+
+const FooterLinks = ({ title, links }) => (
+  <div>
+    <SectionTitle title={title} />
+    <div style={{ display: "flex", flexDirection: "column", gap: 9 }}>
+      {links.map((link, index) => (
+        <Link key={index} to={link.to} className="ft-link" style={footerLinkStyle}>
+          <span style={dotStyle} />
+          {link.label}
+        </Link>
+      ))}
+    </div>
+  </div>
+);
+
+const IconBox = ({ children }) => (
+  <div
+    style={{
+      width: 28,
+      height: 28,
+      borderRadius: 8,
+      background: "rgba(232,201,138,0.12)",
+      display: "flex",
+      alignItems: "center",
+      justifyContent: "center",
+      color: "#e8c98a",
+      flexShrink: 0,
+    }}
+  >
+    {children}
+  </div>
+);
+
+/* ---------------- Styles ---------------- */
+
+const socialStyle = (color) => ({
+  width: 32,
+  height: 32,
+  borderRadius: 9,
+  display: "flex",
+  alignItems: "center",
+  justifyContent: "center",
+  textDecoration: "none",
+  background: `${color}20`,
+  border: `1px solid ${color}50`,
+  color,
+});
+
+const footerLinkStyle = {
+  fontSize: "0.82rem",
+  color: "rgba(245,236,224,0.55)",
+  textDecoration: "none",
+  display: "flex",
+  alignItems: "center",
+  gap: 6,
+};
+
+const dotStyle = {
+  width: 4,
+  height: 4,
+  borderRadius: "50%",
+  background: "#e8c98a",
+  display: "inline-block",
+};
+
+const contactItemStyle = {
+  display: "flex",
+  alignItems: "center",
+  gap: 8,
+  textDecoration: "none",
+  cursor: "pointer",
+};
+
+const contactTextStyle = {
+  fontSize: "0.78rem",
+  color: "rgba(245,236,224,0.55)",
+};
+
+const feedbackButtonStyle = {
+  display: "inline-flex",
+  alignItems: "center",
+  gap: 6,
+  color: "#e8c98a",
+  fontSize: "0.76rem",
+  fontWeight: 600,
+  textDecoration: "none",
+  padding: "6px 14px",
+  borderRadius: 8,
+  border: "1px solid rgba(232,201,138,0.3)",
+  background: "rgba(232,201,138,0.08)",
+  transition: "all 0.18s",
+};
 
 export default Footer;
