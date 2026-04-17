@@ -1,4 +1,3 @@
-// src/components/Footer.jsx
 import { Link } from "react-router-dom";
 import { MessageCircle, Mail, Phone, Check } from "lucide-react";
 import { useState } from "react";
@@ -6,7 +5,6 @@ import { useState } from "react";
 const CONTACT_EMAIL = "supportplanexa@gmail.com";
 const CONTACT_PHONE = "+919876543210";
 const WHATSAPP_NUMBER = "919800100001";
-// ============================================================
 
 const Footer = () => {
   const [copiedField, setCopiedField] = useState(null);
@@ -256,6 +254,7 @@ const Footer = () => {
                 </IconBox>
                 <span style={contactTextStyle}>{CONTACT_PHONE}</span>
               </a>
+              
             </div>
           </div>
         </div>

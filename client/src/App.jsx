@@ -13,11 +13,12 @@ import Register    from './pages/public/Register';
 import ContactUs   from './pages/public/ContactUs';
 import Event       from './pages/public/Event';
 import EventDetail from './pages/public/EventDetail';
-import MyBookings  from './pages/public/MyBookings';
+
 import Feedback    from './pages/public/Feedback';
 
 // User Pages
-import Profile from './pages/user/Profile';
+import Profile     from './pages/user/Profile';
+import MyBookings  from './pages/user/MyBookings';
 
 // Admin Pages
 import AdminDashboard from './pages/admin/AdminDashboard';

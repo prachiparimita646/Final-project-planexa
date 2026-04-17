@@ -1,4 +1,3 @@
-// src/pages/user/MyBookings.jsx
 import React, { useEffect, useState } from "react";
 import { Link } from "react-router-dom";
 import api from "../../services/api";
@@ -6,13 +5,17 @@ import {
   Calendar,
   MapPin,
   Users,
-  CreditCard,
   Ticket,
+  X,
+  CheckCircle,
 } from "lucide-react";
 
 const MyBookings = () => {
   const [bookings, setBookings] = useState([]);
   const [loading, setLoading] = useState(true);
+  const [cancellingId, setCancellingId] = useState(null);
+  const [confirmBookingId, setConfirmBookingId] = useState(null);
+  const [showSuccess, setShowSuccess] = useState(false);
 
   // Fetch bookings from backend
   const fetchBookings = async () => {
@@ -30,6 +33,26 @@ const MyBookings = () => {
     fetchBookings();
   }, []);
 
+  // Cancel booking handler (called after user confirms)
+  const handleCancelBooking = async () => {
+    const bookingId = confirmBookingId;
+    setConfirmBookingId(null);
+    setCancellingId(bookingId);
+    try {
+      await api.patch(`/bookings/${bookingId}/cancel`);
+      // Remove the booking card from the list
+      setBookings((prev) => prev.filter((b) => b._id !== bookingId));
+      // Show success toast
+      setShowSuccess(true);
+      setTimeout(() => setShowSuccess(false), 3000);
+    } catch (error) {
+      console.error("Error cancelling booking:", error);
+      alert("Failed to cancel booking. Please try again.");
+    } finally {
+      setCancellingId(null);
+    }
+  };
+
   // Format date to Indian style
   const formatDate = (dateString) => {
     if (!dateString) return "TBA";
@@ -38,14 +61,6 @@ const MyBookings = () => {
       month: "long",
       year: "numeric",
     });
-  };
-
-  // Format currency to INR
-  const formatCurrency = (amount) => {
-    return new Intl.NumberFormat("en-IN", {
-      style: "currency",
-      currency: "INR",
-    }).format(amount || 0);
   };
 
   // Booking status badge styles
@@ -60,13 +75,6 @@ const MyBookings = () => {
     }
   };
 
-  // Payment status badge styles
-  const getPaymentBadge = (status) => {
-    return status === "paid"
-      ? "bg-green-100 text-green-700"
-      : "bg-yellow-100 text-yellow-700";
-  };
-
   // Loading State
   if (loading) {
     return (
@@ -79,6 +87,44 @@ const MyBookings = () => {
 
   return (
     <div className="min-h-screen bg-gray-50">
+
+      {/* ================= Confirm Cancel Modal ================= */}
+      {confirmBookingId && (
+        <div className="fixed inset-0 z-50 flex items-center justify-center bg-black/50 backdrop-blur-sm">
+          <div className="bg-white rounded-3xl shadow-2xl p-8 max-w-sm w-full mx-4 text-center">
+            <div className="w-16 h-16 bg-red-100 rounded-full flex items-center justify-center mx-auto mb-4">
+              <X size={32} className="text-red-500" />
+            </div>
+            <h3 className="text-xl font-bold text-gray-800 mb-2">Cancel Booking?</h3>
+            <p className="text-gray-500 mb-6 text-sm">
+              Are you sure you want to cancel this booking? This action cannot be undone.
+            </p>
+            <div className="flex gap-3">
+              <button
+                onClick={() => setConfirmBookingId(null)}
+                className="flex-1 py-2.5 rounded-full border border-gray-300 text-gray-600 hover:bg-gray-50 font-medium transition"
+              >
+                No, Keep It
+              </button>
+              <button
+                onClick={handleCancelBooking}
+                className="flex-1 py-2.5 rounded-full bg-red-500 hover:bg-red-600 text-white font-medium transition"
+              >
+                Yes, Cancel
+              </button>
+            </div>
+          </div>
+        </div>
+      )}
+
+      {/* ================= Success Toast ================= */}
+      {showSuccess && (
+        <div className="fixed top-6 right-6 z-50 flex items-center gap-3 bg-white border border-green-200 shadow-xl rounded-2xl px-5 py-4">
+          <CheckCircle size={22} className="text-green-500 shrink-0" />
+          <p className="text-gray-800 font-medium text-sm">Booking cancelled successfully!</p>
+        </div>
+      )}
+
       {/* ================= Hero Section ================= */}
       <div
         className="relative text-white py-16 px-6 shadow-lg overflow-hidden"
@@ -96,8 +142,8 @@ const MyBookings = () => {
 
         {/* Hero Content */}
         <div className="relative max-w-6xl mx-auto">
-          <h1 className="text-4xl md:text-5xl font-bold mb-3 flex items-center gap-3">
-            <Ticket size={40} className="text-amber-300" />
+          <h1 className="text-4xl md:text-3xl font-bold mb-3 flex items-center gap-3">
+            <Ticket size={30} className="text-amber-200" />
             My Bookings
           </h1>
           <p className="text-lg text-amber-100 max-w-2xl">
@@ -146,21 +192,14 @@ const MyBookings = () => {
                     className="h-56 w-full object-cover"
                   />
 
-                  {/* Status Badges */}
-                  <div className="absolute top-4 right-4 flex flex-col gap-2">
+                  {/* Booking Status Badge */}
+                  <div className="absolute top-4 right-4">
                     <span
                       className={`px-3 py-1 text-xs font-semibold rounded-full ${getStatusBadge(
                         booking.bookingStatus
                       )}`}
                     >
                       {booking.bookingStatus?.toUpperCase()}
-                    </span>
-                    <span
-                      className={`px-3 py-1 text-xs font-semibold rounded-full ${getPaymentBadge(
-                        booking.paymentStatus
-                      )}`}
-                    >
-                      {booking.paymentStatus?.toUpperCase()}
                     </span>
                   </div>
 
@@ -190,30 +229,36 @@ const MyBookings = () => {
                     Seats: {booking.numberOfSeats}
                   </div>
 
-                  {/* Payment Info */}
-                  <div className="pt-4 border-t flex justify-between items-center">
-                    <div>
-                      <p className="text-xs text-gray-500">Total Paid</p>
-                      <p className="text-lg font-bold text-green-600">
-                        {formatCurrency(booking.totalAmount)}
-                      </p>
-                    </div>
+                  {/* Action Buttons */}
+                  <div className="flex gap-3 mt-4">
+                    {/* View Event Button */}
+                    {booking.event?._id && (
+                      <Link
+                        to={`/events/${booking.event._id}`}
+                        className="flex-1 block text-center bg-[rgb(53,26,8)] hover:bg-[rgb(83,46,24)] text-white py-2 rounded-full font-medium transition"
+                      >
+                        View Event
+                      </Link>
+                    )}
 
-                    <div className="flex items-center gap-2 text-amber-700 font-semibold">
-                      <CreditCard size={18} />
-                      {booking.paymentMethod || "Online"}
-                    </div>
+                    {/* Cancel Booking Button */}
+                    {booking.bookingStatus !== "cancelled" && (
+                      <button
+                        onClick={() => setConfirmBookingId(booking._id)}
+                        disabled={cancellingId === booking._id}
+                        className="flex items-center justify-center gap-1 px-4 py-2 rounded-full border border-red-400 text-red-500 hover:bg-red-50 font-medium text-sm transition disabled:opacity-50 disabled:cursor-not-allowed"
+                      >
+                        {cancellingId === booking._id ? (
+                          <div className="w-4 h-4 border-2 border-red-400 border-t-transparent rounded-full animate-spin"></div>
+                        ) : (
+                          <>
+                            <X size={14} />
+                            Cancel
+                          </>
+                        )}
+                      </button>
+                    )}
                   </div>
-
-                  {/* View Event Button */}
-                  {booking.event?._id && (
-                    <Link
-                      to={`/events/${booking.event._id}`}
-                      className="block text-center mt-4 bg-[rgb(53,26,8)] hover:bg-[rgb(83,46,24)] text-white py-2 rounded-full font-medium transition"
-                    >
-                      View Event
-                    </Link>
-                  )}
                 </div>
               </div>
             ))}

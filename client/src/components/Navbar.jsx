@@ -1,13 +1,15 @@
-import { useState, useEffect } from "react";
+import { useState, useEffect, useRef } from "react";
 import { Link, useLocation } from "react-router-dom";
 import { useAuth } from "../context/AuthContext";
-import { Menu, X, LayoutDashboard, LogOut, User, BookOpen } from "lucide-react";
+import { Menu, X, LayoutDashboard, LogOut, User, BookOpen, ChevronDown } from "lucide-react";
 
 const Navbar = () => {
-  const { user, logout }    = useAuth();
-  const location            = useLocation();
+  const { user, logout }        = useAuth();
+  const location                = useLocation();
   const [scrolled, setScrolled] = useState(false);
   const [menuOpen, setMenuOpen] = useState(false);
+  const [dropOpen, setDropOpen] = useState(false);
+  const dropRef                 = useRef(null);
 
   useEffect(() => {
     const onScroll = () => setScrolled(window.scrollY > 20);
@@ -15,16 +17,27 @@ const Navbar = () => {
     return () => window.removeEventListener("scroll", onScroll);
   }, []);
 
-  useEffect(() => { setMenuOpen(false); }, [location]);
+  useEffect(() => { setMenuOpen(false); setDropOpen(false); }, [location]);
+
+  // Close dropdown when clicking outside
+  useEffect(() => {
+    const handler = (e) => {
+      if (dropRef.current && !dropRef.current.contains(e.target)) {
+        setDropOpen(false);
+      }
+    };
+    document.addEventListener("mousedown", handler);
+    return () => document.removeEventListener("mousedown", handler);
+  }, []);
 
   const isActive = (path) =>
     path === "/" ? location.pathname === "/" : location.pathname.startsWith(path);
 
   const navLinks = [
-    { to: "/",       label: "Home"    },
-    { to: "/about",  label: "About"   },
-    { to: "/events", label: "Events"  },
-    { to: "/contact",label: "Contact" },
+    { to: "/",        label: "Home"    },
+    { to: "/about",   label: "About"   },
+    { to: "/events",  label: "Events"  },
+    { to: "/contact", label: "Contact" },
   ];
 
   return (
@@ -68,18 +81,119 @@ const Navbar = () => {
         .nb-link:hover, .nb-link.active { color: #2c1a0e; }
         .nb-link:hover::after, .nb-link.active::after { transform: scaleX(1); }
 
-        /* Admin button */
-        .nb-admin {
-          display: inline-flex; align-items: center; gap: 6px;
-          background: rgba(139,94,60,0.1);
-          color: #8b5e3c;
-          font-size: 0.82rem; font-weight: 600;
-          padding: 6px 14px; border-radius: 9px;
-          text-decoration: none;
-          border: 1px solid rgba(139,94,60,0.22);
-          transition: background 0.18s, color 0.18s;
+        /* ── Profile trigger button ── */
+        .nb-profile-btn {
+          display: inline-flex;
+          align-items: center;
+          gap: 7px;
+          background: rgba(139,94,60,0.08);
+          border: 1px solid rgba(139,94,60,0.20);
+          border-radius: 999px;
+          padding: 5px 14px 5px 6px;
+          cursor: pointer;
+          font-family: inherit;
+          transition: background 0.18s, border-color 0.18s, box-shadow 0.18s;
+          color: #2c1a0e;
         }
-        .nb-admin:hover { background: #8b5e3c; color: #fff; }
+        .nb-profile-btn:hover,
+        .nb-profile-btn.open {
+          background: rgba(139,94,60,0.14);
+          border-color: rgba(139,94,60,0.40);
+          box-shadow: 0 2px 10px rgba(139,94,60,0.12);
+        }
+
+        .nb-avatar {
+          width: 28px; height: 28px;
+          border-radius: 50%;
+          background: linear-gradient(135deg, #c4945a, #8b5e3c);
+          display: flex; align-items: center; justify-content: center;
+          font-size: 0.72rem; font-weight: 700; color: #fff;
+          flex-shrink: 0;
+          letter-spacing: 0.02em;
+        }
+
+        .nb-profile-label {
+          font-size: 0.84rem;
+          color: #a88972;
+          font-weight: 500;
+          line-height: 1;
+        }
+        .nb-profile-label strong {
+          display: block;
+          font-size: 0.87rem;
+          color: #2c1a0e;
+          font-weight: 600;
+        }
+
+        .nb-chevron {
+          color: #8b5e3c;
+          transition: transform 0.22s ease;
+          flex-shrink: 0;
+        }
+        .nb-chevron.rotated { transform: rotate(180deg); }
+
+        /* ── Dropdown panel ── */
+        .nb-dropdown {
+          position: absolute;
+          top: calc(100% + 10px);
+          right: 0;
+          min-width: 210px;
+          background: #faf4ec;
+          border: 1px solid rgba(139,94,60,0.16);
+          border-radius: 14px;
+          box-shadow: 0 12px 40px rgba(44,26,14,0.14), 0 2px 8px rgba(44,26,14,0.06);
+          padding: 8px;
+          animation: dropFade 0.18s ease;
+          z-index: 999;
+        }
+        @keyframes dropFade {
+          from { opacity: 0; transform: translateY(-6px); }
+          to   { opacity: 1; transform: translateY(0);    }
+        }
+
+        .nb-drop-header {
+          padding: 10px 12px 8px;
+          border-bottom: 1px solid rgba(139,94,60,0.10);
+          margin-bottom: 6px;
+        }
+        .nb-drop-name {
+          font-size: 0.92rem; font-weight: 700; color: #2c1a0e;
+        }
+        .nb-drop-role {
+          font-size: 0.75rem; color: #a88972; font-weight: 500;
+          text-transform: capitalize; margin-top: 1px;
+        }
+
+        .nb-drop-item {
+          display: flex;
+          align-items: center;
+          gap: 10px;
+          padding: 9px 12px;
+          border-radius: 9px;
+          text-decoration: none;
+          font-size: 0.86rem;
+          font-weight: 500;
+          color: #4a3324;
+          transition: background 0.15s, color 0.15s;
+          cursor: pointer;
+          font-family: inherit;
+          border: none;
+          background: none;
+          width: 100%;
+          text-align: left;
+        }
+        .nb-drop-item:hover {
+          background: rgba(139,94,60,0.09);
+          color: #2c1a0e;
+        }
+        .nb-drop-item.danger { color: #8b3a2a; }
+        .nb-drop-item.danger:hover { background: rgba(139,60,60,0.09); color: #7a2a1a; }
+
+        .nb-drop-divider {
+          height: 1px;
+          background: rgba(139,94,60,0.10);
+          margin: 6px 0;
+        }
 
         /* Register button */
         .nb-register {
@@ -102,19 +216,6 @@ const Navbar = () => {
         }
         .nb-login:hover { color: #2c1a0e; }
 
-        /* Logout button */
-        .nb-logout {
-          display: inline-flex; align-items: center; gap: 6px;
-          background: rgba(139,60,60,0.08);
-          color: #8b3a2a;
-          font-size: 0.82rem; font-weight: 600;
-          padding: 6px 14px; border-radius: 9px;
-          border: 1px solid rgba(139,60,60,0.18);
-          cursor: pointer; font-family: inherit;
-          transition: background 0.18s, color 0.18s;
-        }
-        .nb-logout:hover { background: #8b3a2a; color: #fff; }
-
         /* Mobile menu */
         .nb-mobile {
           background: rgba(250,244,236,0.98);
@@ -123,7 +224,6 @@ const Navbar = () => {
           display: flex; flex-direction: column; gap: 14px;
           box-shadow: 0 8px 24px rgba(139,94,60,0.10);
         }
-
         .nb-mobile-link {
           font-size: 0.92rem; font-weight: 500;
           color: #6b4c35; text-decoration: none;
@@ -146,7 +246,7 @@ const Navbar = () => {
         <div style={{ maxWidth: 1180, margin: "0 auto", padding: "0 24px" }}>
           <div style={{ display: "flex", alignItems: "center", justifyContent: "space-between", height: 62 }}>
 
-            {/* ── Logo (text only) ── */}
+            {/* ── Logo ── */}
             <Link to="/" style={{ textDecoration: "none", display: "flex", flexDirection: "column", lineHeight: 1.1 }}>
               <span style={{ fontFamily: "'Cormorant Garamond', serif", fontSize: "1.25rem", fontWeight: 700, color: "#2c1a0e", letterSpacing: "-0.01em" }}>The Event Utsava</span>
               <span style={{ fontFamily: "'Cormorant Garamond', serif", fontSize: "0.78rem", fontWeight: 600, color: "#c4945a", fontStyle: "italic", letterSpacing: "0.04em" }}>by Planexa</span>
@@ -164,34 +264,68 @@ const Navbar = () => {
               <div style={{ width: 1, height: 20, background: "rgba(139,94,60,0.2)" }} />
 
               {user ? (
-                <>
-                  {/* Greeting */}
-                  <span style={{ fontSize: "0.84rem", color: "#a88972", fontWeight: 500 }}>
-                    Hi, <strong style={{ color: "#2c1a0e" }}>{user.name?.split(" ")[0]}</strong>
-                  </span>
+                /* ── Profile dropdown trigger ── */
+                <div ref={dropRef} style={{ position: "relative" }}>
+                  <button
+                    className={`nb-profile-btn ${dropOpen ? "open" : ""}`}
+                    onClick={() => setDropOpen(p => !p)}
+                  >
+                    {/* Avatar initials */}
+                    <div className="nb-avatar">
+                      {user.name?.split(" ").map(w => w[0]).slice(0, 2).join("").toUpperCase()}
+                    </div>
 
-                  {/* My Bookings (non-admin only) */}
-                  {user.role !== "admin" && (
-                    <Link to="/my-bookings" className="nb-link" style={{ display: "inline-flex", alignItems: "center", gap: 5 }}>
-                      <BookOpen size={14} /> My Bookings
-                    </Link>
-                  )}
+                    <div className="nb-profile-label">
+                      <strong>{user.name?.split(" ")[0]}</strong>
+                    </div>
 
-                  {/* Admin Panel */}
-                  {user.role === "admin" && (
-                    <Link to="/admin" className="nb-admin">
-                      <LayoutDashboard size={14} /> Admin Panel
-                    </Link>
-                  )}
-
-                  {/* Logout */}
-                  <button onClick={logout} className="nb-logout">
-                    <LogOut size={13} /> Logout
+                    <ChevronDown size={15} className={`nb-chevron ${dropOpen ? "rotated" : ""}`} />
                   </button>
-                </>
+
+                  {/* ── Dropdown ── */}
+                  {dropOpen && (
+                    <div className="nb-dropdown">
+                      {/* Header */}
+                      <div className="nb-drop-header">
+                        <div className="nb-drop-name">{user.name}</div>
+                        <div className="nb-drop-role">{user.role || "Member"}</div>
+                      </div>
+
+                      {/* My Profile */}
+                      <Link to="/profile" className="nb-drop-item">
+                        <User size={15} />
+                        My Profile
+                      </Link>
+
+                      {/* My Bookings (non-admin) */}
+                      {user.role !== "admin" && (
+                        <Link to="/my-bookings" className="nb-drop-item">
+                          <BookOpen size={15} />
+                          My Bookings
+                        </Link>
+                      )}
+
+                      {/* Admin Panel */}
+                      {user.role === "admin" && (
+                        <Link to="/admin" className="nb-drop-item">
+                          <LayoutDashboard size={15} />
+                          Admin Panel
+                        </Link>
+                      )}
+
+                      <div className="nb-drop-divider" />
+
+                      {/* Logout */}
+                      <button onClick={logout} className="nb-drop-item danger">
+                        <LogOut size={15} />
+                        Logout
+                      </button>
+                    </div>
+                  )}
+                </div>
               ) : (
                 <>
-                  <Link to="/login" className="nb-login">Login</Link>
+                  <Link to="/login"    className="nb-login">Login</Link>
                   <Link to="/register" className="nb-register">Register</Link>
                 </>
               )}
@@ -207,7 +341,7 @@ const Navbar = () => {
           </div>
         </div>
 
-        {/* ── Mobile menu ── */}
+        {/* ── Mobile menu (unchanged) ── */}
         {menuOpen && (
           <div className="nb-mobile">
             {navLinks.map(l => (
@@ -219,8 +353,10 @@ const Navbar = () => {
             {user ? (
               <>
                 <span style={{ fontSize: "0.82rem", color: "#a88972" }}>
-                  Hi, <strong style={{ color: "#2c1a0e" }}>{user.name}</strong>
+                  <strong style={{ color: "#2c1a0e" }}>{user.name}</strong>
                 </span>
+
+                <Link to="/profile" className="nb-mobile-link">My Profile</Link>
 
                 {user.role !== "admin" && (
                   <Link to="/my-bookings" className="nb-mobile-link">My Bookings</Link>

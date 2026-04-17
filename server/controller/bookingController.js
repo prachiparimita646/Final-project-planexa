@@ -24,6 +24,35 @@ exports.getMyBookings = async (req, res) => {
   } catch (error) { res.status(500).json({ message: error.message }); }
 };
 
+// ── Cancel booking (user cancels their own booking) ──
+exports.cancelBooking = async (req, res) => {
+  try {
+    const booking = await Booking.findById(req.params.id).populate("event");
+    if (!booking) return res.status(404).json({ message: "Booking not found" });
+
+    // Make sure the booking belongs to the logged-in user
+    if (booking.user.toString() !== req.user._id.toString()) {
+      return res.status(403).json({ message: "Not authorized to cancel this booking" });
+    }
+
+    // Already cancelled
+    if (booking.bookingStatus === "cancelled") {
+      return res.status(400).json({ message: "Booking is already cancelled" });
+    }
+
+    // Restore available seats
+    if (booking.event) {
+      booking.event.availableSeats += booking.numberOfSeats;
+      await booking.event.save();
+    }
+
+    booking.bookingStatus = "cancelled";
+    await booking.save();
+
+    res.json({ success: true, message: "Booking cancelled successfully", booking });
+  } catch (error) { res.status(500).json({ message: error.message }); }
+};
+
 exports.updateBookingStatus = async (req, res) => {
   try {
     const { bookingStatus, paymentStatus } = req.body;
