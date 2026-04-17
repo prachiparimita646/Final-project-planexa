@@ -3,11 +3,20 @@ require('dotenv').config();
 const express  = require('express');
 const mongoose = require('mongoose');
 const cors     = require('cors');
+const fs       = require('fs');
 
 const app = express();
 
-// ── Middleware ──
+console.log("ENV CHECK:", process.env.MONGO_URI);
 
+// ── DEBUG (to check your route folder) ──
+try {
+  console.log("📂 route folder files:", fs.readdirSync('./route'));
+} catch (err) {
+  console.log("❌ route folder not found");
+}
+
+// ── Middleware ──
 app.use(cors({
   origin: (origin, callback) => {
     if (!origin || origin.startsWith('http://localhost')) {
@@ -20,16 +29,18 @@ app.use(cors({
 }));
 app.use(express.json());
 
-// ── Connect to MongoDB ──
-mongoose.connect(process.env.MONGO_URI)
-  .then(() => console.log('✅ MongoDB connected to Event_Management_database'))
-  .catch(err => console.log('❌ MongoDB connection error:', err.message));
+// ✅ FIXED MongoDB connection
+const MONGO_URI = process.env.MONGO_URI || "mongodb://127.0.0.1:27017/planexa";
+
+mongoose.connect(MONGO_URI)
+  .then(() => console.log('✅ MongoDB connected'))
+  .catch(err => console.log('❌ MongoDB error:', err.message));
 
 // ── Routes ──
-app.use('/api/auth',     require('./route/authRoutes'));
-app.use('/api/events',   require('./route/eventRoutes'));
+app.use('/api/auth', require('./route/authRoutes'));
+app.use('/api/events', require('./route/eventRoutes'));
 app.use('/api/bookings', require('./route/bookingRoutes'));
-app.use('/api/contact',  require('./route/contactRoutes'));
+app.use('/api/contact', require('./route/contactRoutes'));
 
 // ── Test route ──
 app.get('/', (req, res) => {
